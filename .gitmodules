@@ -1,0 +1,3 @@
+[submodule "externals/ucsddissertation"]
+	path = externals/ucsddissertation
+	url = git@github.com:alexras/ucsddissertation.git
