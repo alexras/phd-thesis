@@ -2184,7 +2184,7 @@ echo-list	= for x in $1; do $(ECHO) "$$x"; done
 #
 
 .PHONY: all
-all: $(default_pdf_targets) ;
+all: clean $(default_pdf_targets) ;
 
 .PHONY: all-pdf
 all-pdf: $(default_pdf_targets) ;
