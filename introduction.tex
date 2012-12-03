@@ -20,8 +20,122 @@ data sets are but a few examples of a new class of ``big data'' -- data sets
 that are so large and complex that they become difficult to process using
 existing techniques and technologies.
 
+\section{Definitions}
+
+For the remainder of this dissertation, I will assume that a data set consists
+of a large number of \emph{records}, each of which consists of a \emph{key} and
+a \emph{value}. A record with key $k$ and value $v$ will be denoted
+\kvpair{k}{v}. Both the key and the value can be arbitrary.
+
+\section{The Rise of Scale-Out Partition-Parallel Architectures}
+
+Some data-intensive problems allow every record to be processed in parallel
+without knowing anything about other record. These problems are known as
+``embarrassingly parallel'', and can be scaled out quite easily. For this class
+of problems, simply splitting the data into small pieces and running the
+desired computation over each piece is sufficient and can be scaled quite
+easily. An example of an embarrassingly parallel problem is searching a corpus
+of text for occurrences of a word; each document in the corpus can be scanned
+independently and the results of the scan over each document can be trivially
+merged together afterward.
+
+However, a much larger class of problems are not embarrassingly parallel. These
+problems require some form of aggregation or combination (analogous to group-by
+and join in relational database systems) in addition to record-by-record
+processing. Take, for example, the problem of counting the number of times each
+word occurs in a corpus of text. The occurrences of each word can be counted in
+each document independently, but these counts must then be added
+together. Performing this aggregation efficiently is one of the primary
+challenges facing designers of systems for computing on ``big data''.
+
 In recent years, a range of large-scale, data-intensive systems have been
-developed to attempt to tackle the analysis of ``big data'' workloads. These
-systems typically approach a given data analysis task by breaking the task into
-logically separable pieces and then distributing those pieces across a cluster
-of tens to tens of thousands of computers.
+developed to tackle these kinds of workloads.  These systems work by
+performing both record-by-record processing and aggregation in parallel whenever
+possible by performing the computation over disjoint partitions of the
+data.
+
+One of the most popular frameworks for this form of analysis is
+MapReduce~\cite{mapreduce}. A MapReduce computation is specified by two
+functions. The first function, \emph{map}, takes a record as input and produces
+zero or more records; it performs the record-by-record processing. Map
+functions are generally assumed to be stateless and side-effect free so that
+they are idempotent. The second function, \emph{reduce}, takes all records with
+the same key as input and produces zero or more records.
+
+As an example, consider the problem of counting the occurrences of each word in
+a text corpus. For this problem, the user might write a map function that takes
+a line of text as input and produces the record \kvpair{word}{1} for each word
+in the line. The reduce function would receive all $n$ records for a given
+word, add their values together, and produce a single record \kvpair{word}{n}.
+
+MapReduce's strength lies in the simplicity of its programming model. Users of
+MapReduce need only write map and reduce functions without concerning
+themselves with dividing the data among nodes, performing inter-node
+communication or handling node failure. The map function's domain and its
+idempotent nature make it embarrassingly parallel, while the reduce function's
+parallelism can be adjusted from completely serial to extremely parallel based
+on the number of distinct keys in the records produced by the map function.
+
+MapReduce was developed by Google in the early 2000s for tasks like inverted
+index generation and PageRank~\cite{pagerank} computation over Google's cache
+of the web. Engineers at Yahoo! wrote an open-source version of MapReduce
+called Hadoop~\cite{hadoop} in 2005 that has since become extremely popular and
+is widely deployed in both academic and industrial settings.
+
+
+\section{Scale-Out, but not Scale-Up}
+
+While these systems scale quite well, they do not utilize their clusters'
+resources to nearly the extent that they should. As one example, a cluster of
+3452 nodes running Hadoop sorted 100 TB of data in 173
+minutes~\cite{hadoop-sort-2009}. At a high level, this performance is quite
+impressive -- an average of 578 GB of data sorted per minute. This high-level
+performance masks a great deal of inefficiency, however. In the aforementioned
+record-setting sort, each node in the cluster's average rate was approximately
+2.8 MBps, a small fraction of the speed at which that node's disks are able to
+read and write data. This performance difference is even more shocking when one
+considers that a significant fraction of the data (approximately 27 TB) could
+conceivably be buffered in the cluster's main memory for faster access.
+
+These problems are not limited to Hadoop, however. Anderson and
+Tucek~\cite{efficiency-matters} examined a collection of large-scale
+data-intensive processing systems and found a widespread lack of efficiency
+among them.
+
+\begin{table}
+\begin{tabular}{c|c|c|c|c|c|c|c}
+\textbf{Year} & \textbf{Name} & \textbf{Data Size} & \textbf{Nodes} & \textbf{Disks} & \textbf{MB/s} & \textbf{MB/s/node} & \textbf{MB/s/disk}\\
+\hline
+2012 & Themis & 35TB & 20 & 320 & 4656 & 232.8 & 14.6 \\
+2011 & Themis & 100TB & 52 & 832 & 12080 & 232.4 & 14.5 \\
+2011 & TritonSort & 100TB & 52 & 832  & 15633 & 300.6 & 18.8 \\
+2009 & Hadoop & 100TB & 3452 & 13808 & 9633 & 2.79 & 0.69 \\
+2009 & DEMSort & 100TB & 195 & 780 & 9400 & 48.2 & 12.1
+\end{tabular}
+\caption{\label{table:system-efficiency} Large scale sorting results over time,
+  and their associated per-node and per-disk efficiency. Results extracted from
+  ~\cite{efficiency-matters, hadoop-sort-2009, themis, tritonsort}.}
+\end{table}
+
+The tempting solution to the problem of low efficiency is to simply increase
+the size of the cluster. Splitting the data being processed among progressively
+more machines decreases both the amount of data that each node must process and
+(at least to a degree) increases the throughput of the system. However, this
+approach has several negative consequences.
+
+Larger clusters have a proportionally large associated capital expense and
+operational cost. Google, one of the pioneers of the current wave of largest
+data-intensive systems, has contracted over 260MW to power its data
+centers~\cite{google-dc-power-blog}. When it filed for IPO in 2011, Facebook
+reported that it spent \$606 million on constructing and equipping its data
+centers in 2011 and expected to spend another \$500 million in
+2012~\cite{facebook-ipo}. As the size of problems to be solved increases, these
+expenses can only increase. These large data centers also have an environmental
+cost. McKinsey and Company estimates that the carbon dioxide emissions from
+data centers will surpass emissions from the airline industry by
+2020~\cite{mckinsey-co2-study}.  Further, larger clusters are harder to manage
+and experience faults more frequently than smaller clusters do because of the
+increased number of nodes in those clusters. We will explore the implications
+of increased failure further in Chapter~\ref{chapter:fault_tolerance}.
+
+\section{Sources of Inefficiency in Existing Systems}
