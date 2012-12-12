@@ -1,0 +1,120 @@
+\chapter{Related Work}
+\label{chapter:related}
+
+\section{Large-Scale Sorting Systems}
+
+The Datamation sorting benchmark\cite{datamation} initially measured the
+elapsed time to sort one million records from disk to disk. As hardware has
+improved, the number of records required by the benchmark has grown to its
+current level of 100TB.  Over the years, numerous authors have reported the
+performance of their sorting systems, and we benefit from their
+insights\cite{DEMSort, TokuSampleSort, SCS, nowsort, NSort, alphaSort}.  We
+differ from previous sort benchmark holders in that we focus on maximizing both
+aggregate throughput and per-node efficiency.
+
+NOWSort\cite{nowsort} was the first of the aforementioned sorting systems to
+run on a shared-nothing cluster.  NOWSort employs a two-phase pipeline that
+generates multiple sorted runs in the first phase and merges them together in
+the second phase, a technique shared by DEMSort\cite{DEMSort}.  An evaluation
+of NOWSort done in 1998\cite{balance98} found that its performance was
+limited by I/O bus bandwidth and poor instruction locality.  Modern PCI buses
+and multi-core processors have largely eliminated these concerns; in practice,
+\tritonsort is bottlenecked by disk bandwidth.
+
+
+\section{Achieving Per-Resource Balance}
+
+Achieving per-resource balance in a large-scale data processing system is the
+subject of a large volume of previous research dating back at least as far as
+1970.  Among the more well-known guidelines for building such systems are the
+Amdahl/Case rules of thumb for building balanced systems~\cite{amdahlcase} and
+Gray and Putzolu's ``five-minute rule''~\cite{fiveminuterule} for trading off
+memory and I/O capacity.  These guidelines have been re-evaluated and refreshed
+as hardware capabilities have increased.
+
+\section{Architectural Influences}
+
+The staged, pipelined dataflow architecture used in both TritonSort and Themis
+is inspired in part by SEDA\cite{seda}, a staged, event-driven software
+architecture that decouples worker stages by interposing queues between them.
+Other DISC systems such as Dryad~\cite{dryad} export a similar model, although
+Dryad has fault-tolerance and data redundancy capabilities that TritonSort and
+Themis do not currently implement.
+
+Many of our design decisions are informed by lessons learned from parallel
+database systems.  Gamma\cite{gamma} was one of the first parallel database
+systems to be deployed on a shared-nothing cluster.  To maximize throughput,
+Gamma employs horizontal partitioning to allow separable queries to be
+performed across many nodes in parallel, an approach that is similar in many
+respects to our use of logical disks.  TritonSort's \sender-\receiver pair is
+similar to the exchange operator first introduced by Volcano\cite{volcano} in
+that it abstracts data partitioning, flow control, parallelism and data
+distribution from the rest of the system.
+
+\section{Fault Tolerance Techniques}
+
+There is a large continuum of fault tolerance options between task-level
+restart and job-level restart, including distributed
+transactions~\cite{percolator}, checkpointing and
+rollback~\cite{Elnozahy:2002:SRP:568522.568525}, lineage-based
+recovery~\cite{spark} and process-pairs replication~\cite{flux}. Each fault
+tolerance approach introduces its own overheads and has its own complexities
+and limitations.  With Themis, we choose to focus our efforts on creating a
+MapReduce system model that is able to handle large real-world data sets while
+utilizing the resources of an existing cluster as much as possible.
+
+Recovery-Oriented Computing (ROC)~\cite{roc,microreboot} is a research vision
+that focuses on efficient recovery from failure, rather than focusing
+exclusively on failure avoidance.  This is helpful in environments where
+failure is inevitable, such as data centers.  The design of task-level fault
+tolerance in existing MapReduce implementations shares similar goals with the ROC
+project.
+
+Sailfish~\cite{sailfish} aims to mitigate partitioning skew in MapReduce by
+choosing the number of reduce tasks and intermediate data partitioning
+dynamically at runtime. It chooses these values using an index constructed on
+intermediate data. Sailfish and Themis represent two design points in a space
+with the similar goal of improving MapReduce's performance through more
+efficient disk I/O.
+
+\section{Improving MapReduce's Performance}
+
+Several efforts aim to improve MapReduce's efficiency and performance.  Some
+focus on runtime changes to better handle common patterns like job
+iteration~\cite{haloop}, while others have extended the programming model to
+handle incremental updates~\cite{CBP,percolator}.  Work on new MapReduce
+scheduling disciplines~\cite{LATE} has improved cluster utilization at a map-
+or reduce-task granularity by minimizing the time that a node waits for
+work. Tenzing~\cite{tenzing}, a SQL implementation built atop the MapReduce
+framework at Google, relaxes or removes the restriction that intermediate data
+be sorted by key in certain situations to improve performance.
+
+Massively parallel processing (MPP) databases often perform
+aggregation in memory to eliminate unnecessary I/O if the output of that
+aggregation does not need to be sorted.  Themis could skip an entire read and
+write pass by pipelining intermediate data through the \reduce function
+directly if the \reduce function was known to be commutative and
+associative. We chose not to do so to keep Themis's operational model
+equivalent to the model presented in the original MapReduce paper.
+
+\section{Skew Mitigation in MapReduce}
+
+Characterizing input data in both centralized and distributed contexts has been
+studied extensively in the database systems
+community~\cite{Manku99,DataSkeletons,Hadjieleftheriou2005}, but many of the
+algorithms studied in this context assume that records have a fixed size and
+are hence hard to adapt to variably-sized, skewed records. Themis's skew
+mitigation techniques bear strong resemblance to techniques used in MPP
+shared-nothing database systems~\cite{DeWittGraySkew}.
+
+The original MapReduce paper~\cite{mapreduce} acknowledges the role that
+imbalance can play on overall performance, which can be affected by data skew.
+SkewReduce~\cite{SkewReduce} alleviates the computational skew problem by
+allowing users to specify a customized cost function on input records.
+Partitioning across nodes relies on this cost function to optimize the
+distribution of data to tasks.  SkewTune~\cite{SkewTune} proposes a more
+general framework to handle skew transparently, without requiring hints from
+users.  SkewTune is activated when a slot becomes idle in the cluster, and
+the task with the greatest estimated remaining time is repartitioned to take
+advantage of that slot.  This reallocates the unprocessed input data through
+range-partitioning, similar to Themis's phase zero.

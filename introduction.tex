@@ -56,25 +56,28 @@ data.
 
 One of the most popular frameworks for this form of analysis is
 MapReduce~\cite{mapreduce}. A MapReduce computation is specified by two
-functions. The first function, \emph{map}, takes a record as input and produces
+functions. The first function, \map, takes a record as input and produces
 zero or more records; it performs the record-by-record processing. Map
 functions are generally assumed to be stateless and side-effect free so that
-they are idempotent. The second function, \emph{reduce}, takes all records with
-the same key as input and produces zero or more records.
+they are idempotent. The second function, \reduce, takes all records with
+the same key as input and produces zero or more records. Colloquially, records
+that have been passed through the \map function are said to have been
+\emph{mapped}, while those that have been passed through the \reduce function
+are said to have been \emph{reduced}.
 
 As an example, consider the problem of counting the occurrences of each word in
-a text corpus. For this problem, the user might write a map function that takes
+a text corpus. For this problem, the user might write a \map function that takes
 a line of text as input and produces the record \kvpair{word}{1} for each word
-in the line. The reduce function would receive all $n$ records for a given
+in the line. The \reduce function would receive all $n$ records for a given
 word, add their values together, and produce a single record \kvpair{word}{n}.
 
 MapReduce's strength lies in the simplicity of its programming model. Users of
-MapReduce need only write map and reduce functions without concerning
+MapReduce need only write map and \reduce functions without concerning
 themselves with dividing the data among nodes, performing inter-node
-communication or handling node failure. The map function's domain and its
-idempotent nature make it embarrassingly parallel, while the reduce function's
+communication or handling node failure. The \map function's domain and its
+idempotent nature make it embarrassingly parallel, while the \reduce function's
 parallelism can be adjusted from completely serial to extremely parallel based
-on the number of distinct keys in the records produced by the map function.
+on the number of distinct keys in the records produced by the \map function.
 
 MapReduce was developed by Google in the early 2000s for tasks like inverted
 index generation and PageRank~\cite{pagerank} computation over Google's cache
@@ -139,3 +142,67 @@ increased number of nodes in those clusters. We will explore the implications
 of increased failure further in Chapter~\ref{chapter:fault_tolerance}.
 
 \section{Sources of Inefficiency in Existing Systems}
+
+While a thorough study of the sources of per-node inefficiency in existing
+systems has not been performed, we can broadly classify two different sources
+of inefficiency in systems that are I/O-bound:
+
+\paragraph{Inefficient I/O} Current-generation large scale data processing
+systems read data from and write data to large collections of magnetic hard
+drives. These magnetic drives are characterized by their fast sequential access
+and slow random access. Fundamentally, systems that desire a high throughput
+from these devices should write to them sequentially as much as possible.
+
+\paragraph{Too much I/O per record} In response to memory pressure, existing
+systems may read and write each record to disk several times before processing
+is complete. These additional reads and writes incur significant additional
+overhead, as disk is at least an order of magnitude slower than main memory or
+network transfer.
+
+\paragraph{Imbalanced hardware configurations} \textbf{**Rough**} Often, the hardware platform on
+which these systems are deployed are configured such that the application
+cannot write to a node's hard drives at full speed. This is usually due to
+insufficient network bandwidth and memory to allow the application to move data
+from its local hard drives over the network to those of a remote node.
+MapReduce, for example, runs into this problem if it can't move mapped records
+to the appropriate destination node fast enough.
+
+\section{Hypothesis}
+
+The hypothesis of this dissertation is that systems built with efficient disk
+I/O as a first-order architectural concern can realize an order of magnitude
+improvement in performance versus existing large-scale data-intensive systems
+without compromising their scalability or generality.
+
+This dissertation argues that the chief challenges of building such a system
+lie both in minimizing the number of I/O operations per record and in ensuring
+that disk I/O is done sequentially as much as possible. This dissertation also
+argues that significant increases in per-node efficiency can be realized by
+considering alternative fault tolerance models to the task-level fault
+tolerance schemes present in modern data-intensive systems.
+
+We explore the design of such a system in this dissertation through two main
+systems: TritonSort, a large-scale sorting system, and Themis, a large-scale
+MapReduce system.
+
+\section{Organization}
+
+TritonSort and Themis have each improved on the performance of systems in their
+respective problem domains by almost an order of magnitude, approaching the
+maximum throughput possible on the clusters on which they are
+deployed. Further, we have demonstrated both analytically and experimentally
+that a range of different fault tolerance schemes that incur less I/O than
+the traditional task-based approach to fault tolerance are practical for a
+wide-range of MapReduce deployments.
+
+In Chapter~\ref{chapter:background}, we provide background on the problem
+domains of large-scale sorting and MapReduce, as well as providing an overview
+of the architecture that underpins both TritonSort and Themis.
+Chapter~\ref{chapter:related} explores related work. In
+Chapter~\ref{chapter:tritonsort}, we describe the design and implementation of
+TritonSort. Chapter~\ref{chapter:themis} presents the design and implementation
+of Themis, focusing in particular on its differences from TritonSort's
+design. In Chapter~\ref{chapter:fault_tolerance}, we take an in-depth look at
+fault tolerance in Themis, looking first at the trade-off between fault
+tolerance and I/O-efficiency, and then examining a few approaches to fault
+tolerance.\textbf{**Rough**}

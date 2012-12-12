@@ -1,6 +1,15 @@
-@string{NSDI = "USENIX Symposium on Networked Systems Design and Implementation"}
-@string{SoCC = "ACM Symposium on Cloud Computing"}
-@string{HotStorage = "USENIX Workshop on Hot Topics in Storage and File Systems"}
+@string{NSDI = "USENIX Symposium on Networked Systems Design and Implementation (NSDI)"}
+@string{SoCC = "ACM Symposium on Cloud Computing (SoCC)"}
+@string{HotStorage = "USENIX Workshop on Hot Topics in Storage and File Systems (HotStorage)"}
+@string{SIGMOD = "ACM Special Interest Group on the Management of Data (SIGMOD)"}
+@string{VLDB = "Conference on Very Large Databases (VLDB)"}
+@string{OSDI = "USENIX Symposium on Operating Systems Design and Implementation (OSDI)"}
+@string{SOSP = "ACM Symposium on Operating Systems Principles (SOSP)"}
+@string{EuroSys = "EuroSys"}
+@string{TKDE = "TKDE"}
+@string{ACM_CSUR = "ACM CSUR"}
+@string{ICDE = "ICDE"}
+@string{CACM = "Communications of the ACM"}
 
 @inproceedings{tritonsort,
    author = "Alexander Rasmussen and George Porter and Michael Conley and Harsha V. Madhyastha and Radhika Niranjan Mysore and Alexander Pucher and Amin Vahdat",
@@ -78,4 +87,245 @@ howpublished={\url{http://sortbenchmark.org/Yahoo2009.pdf}}
   title =        {{Efficiency Matters!}},
   booktitle =    HotStorage,
   year =         2009
+}
+
+@article{datamation,
+  author =       {{Anon et al.}},
+  title =        {{A Measure of Transaction Processing Power}},
+  journal =      {Datamation},
+  year =         1985
+}
+
+@misc{DEMSort,
+  author =       {Mirko Rahn and Peter Sanders and Johannes Singler and Tim
+                  Kieritz},
+  title =        {{{DEMSort} -- Distributed External Memory Sort}},
+  note =         {\url{http://sortbenchmark.org/demsort.pdf}},
+  year =         2009
+}
+
+@misc{TokuSampleSort,
+  author =       {Bradley C. Kuszmaul},
+  title =        {{TeraByte TokuSampleSort}},
+  note =         {\url{http://sortbenchmark.org/tokutera.pdf}},
+  year =         2007
+}
+
+@misc{SCS,
+  author =       {Jim Wyllie},
+  title =        {{Sorting on a Cluster Attached to a Storage-Area Network}},
+  note =         "\url{http://sortbenchmark.org/2005_SCS_Wyllie.pdf}",
+  year =         2005
+}
+
+@inproceedings{nowsort,
+  title =        {{High-performance sorting on networks of workstations}},
+  author =       {Andrea C. Arpaci-Dusseau and Remzi H. Arpaci-Dusseau and
+                  David E. Culler and Joseph M. Hellerstein and David
+                  A. Patterson},
+  booktitle =    SIGMOD,
+  year =         1997
+}
+
+@misc{NSort,
+  author =       {Chris Nyberg and Charles Koester and Jim Gray},
+  title =        {{NSort: a Parallel Sorting Program for NUMA and SMP
+                  Machines}},
+  year =         1997
+}
+
+@inproceedings{alphasort,
+  author =       {Nyberg, Chris and Barclay, Tom and Cvetanovic, Zarka and
+                  Gray, Jim and Lomet, Dave},
+  booktitle =    VLDB,
+  title =        {{Alphasort: A cache-sensitive parallel external sort}},
+  year =         1995
+}
+
+@inproceedings{amdahlcase,
+author = {Gene Amdahl},
+title = {{Storage and I/O Parameters and System Potential}},
+booktitle = {{IEEE Computer Group Conference}},
+year = 1970
+}
+
+@inproceedings{fiveminuterule,
+author = {Jim Gray and Gianfranco R. Putzolu},
+title = {{The 5 Minute Rule for Trading Memory for Disk Accesses and The 10 Byte Rule for Trading Memory for CPU Time}},
+booktitle = SIGMOD,
+year = 1987
+}
+
+@inproceedings{balance98,
+author = {Arpaci-Dusseau, R.H. and Arpaci-Dusseau, A.C. and Culler, D.E. and Hellerstein, J.M. and Patterson, D.A.},
+booktitle = {HPCA},
+pages = {90--101},
+title = {{The architectural costs of streaming I/O: A comparison of workstations, clusters, and SMPs}},
+year = {1998}
+}
+
+@inproceedings{mapreduce,
+  title =        {{{MapReduce}: Simplified Data Processing on Large Clusters}},
+  author =       {Jeffrey Dean and Sanjay Ghemawat},
+  booktitle =    OSDI,
+  year =         2004
+}
+
+@misc{hadoop,
+  key =          {{Yahoo!}},
+  title =        {{Apache Hadoop}},
+  note =         {\url{http://hadoop.apache.org/}}
+}
+
+@inproceedings{seda,
+  author =       {Welsh, Matt and Culler, David and Brewer, Eric},
+  booktitle =    SOSP,
+  title =        {{SEDA: an architecture for well-conditioned, scalable
+                  internet services}},
+  year =         2001
+}
+
+@inproceedings{dryad,
+  author =       {Isard, Michael and Budiu, Mihai and Yu, Yuan and Birrell,
+                  Andrew and Fetterly, Dennis},
+  title =        {{Dryad: distributed data-parallel programs from sequential
+                  building blocks}},
+  booktitle =    EuroSys,
+  year =         2007,
+}
+
+@article{gamma,
+  author =       {DeWitt, D.J. and Ghandeharizadeh, S. and Schneider, D.a. and
+                  Bricker, A. and Hsiao, H.-I. and Rasmussen, R.},
+  journal =      TKDE,
+  title =        {{The Gamma Database Machine Project}},
+  year =         1990
+}
+
+@article{volcano,
+  author =       {Graefe, G.},
+  journal =      TKDE,
+  title =        {{Volcano-an extensible and parallel query evaluation system}},
+  year =         1994
+}
+
+@inproceedings{percolator,
+ title = {{Large-Scale Incremental Processing Using Distributed Transactions and Notifications}},
+ author = {Daniel Peng and Frank Dabek},
+ booktitle = OSDI,
+ year = {2010}
+}
+
+@article{Elnozahy:2002:SRP:568522.568525,
+ author = {Elnozahy, E. N. (Mootaz) and Alvisi, Lorenzo and Wang, Yi and Johnson, David B.},
+ title = {{A Survey of Rollback-Recovery Protocols in Message-Passing Systems}},
+ journal = ACM_CSUR,
+ volume = {34},
+ number = {3},
+ month = sep,
+ year = {2002}
+}
+
+@inproceedings{spark,
+ title = {{Resilient Distributed Datasets: A Fault-Tolerant Abstraction for In-Memory Cluster Computing}},
+ author = {Matei Zaharia and Mosharaf Chowdhury and Tathagata Das and Ankur Dave and Justin Ma and Murphy McCauley and Michael J. Franklin and Scott Shenker and Ion Stoica},
+ booktitle = NSDI,
+ year = {2012}
+}
+
+@inproceedings{flux,
+ title = {{Flux: An Adaptive Partitioning Operator for Continuous Query Systems}},
+ author = {Mehul A. Shah and Joseph M. Hellerstein and Sirish Chandrasekaran and Michael J. Franklin},
+ booktitle = ICDE,
+ year = {2003}
+}
+
+@misc{roc,
+author = {{Recovery-Oriented Computing}},
+howpublished = {\url{http://roc.cs.berkeley.edu/}}
+}
+
+@inproceedings{microreboot,
+ title = {{Microreboot -- {A} Technique for Cheap Recovery}},
+ author = {George Candea and Shinichi Kawamoto and Yuichi Fujiki and Greg Friedman and Armando Fox},
+ booktitle = OSDI,
+ year = {2004}
+}
+
+@inproceedings{haloop,
+ title = {{HaLoop: Efficient Iterative Data Processing on Large Clusters}},
+ author = {Yingyi Bu and Bill Howe and Magdalena Balazinska and Michael D. Ernst},
+ booktitle = VLDB,
+ year = {2010}
+}
+
+@inproceedings{cbp,
+ title = {{Stateful Bulk Processing for Incremental Analytics}},
+ author = {Dionysios Logothetis and Christopher Olston and Benjamin Reed and Kevin C. Webb and Ken Yocum},
+ booktitle = SoCC,
+ year = {2010}
+}
+
+@inproceedings {LATE,
+ title = {{Improving MapReduce Performance in Heterogeneous Environments}},
+ author = {Matei Zaharia and Andy Konwinski and Anthony D Joseph and Randy Katz and Ion Stoica},
+ booktitle = OSDI,
+ year = {2008}
+}
+
+@inproceedings {tenzing,
+ title = {{Tenzing: A SQL Implementation On The MapReduce Framework}},
+ author = {Biswapesh Chattopadhyay and Liang Lin and Weiran Liu and Sagar Mittal and Prathyusha Aragonda and Vera Lychagina and Younghee Kwon and Michael Wong},
+ booktitle = {{Proceedings of the VLDB Endowment}},
+ year = {2011}
+}
+
+@inproceedings{Manku99,
+ title = {{Random Sampling Techniques for Space Efficient Online Computation of Order Statistics of Large Datasets}},
+ author = {Gurmeet Singh Manku and Sridhar Rajagopalan and Bruce G. Lindsay},
+ booktitle = SIGMOD,
+ year = {1999}
+}
+
+@article{DataSkeletons,
+ author = {{McDermott}, James P. and Babu, G. Jogesh and Liechty, John C. and Lin, Dennis K.},
+ title = {{Data Skeletons: {S}imultaneous Estimation of Multiple Quantiles for Massive Streaming Datasets with Applications to Density Estimation}},
+ journal = {Statistics and Computing},
+ volume = {17},
+ number = {4},
+ month = dec,
+ year = {2007},
+}
+
+@techreport{Hadjieleftheriou2005,
+ title = {{Robust Sketching and Aggregation of Distributed Data Streams}},
+ author = {M. Hadjieleftheriou and J.W. Byers and G. Kollios},
+ number = {2005-011},
+ institution = {Boston University},
+ year = {2005}
+}
+
+
+@article{DeWittGraySkew,
+ author = {DeWitt, David and Gray, Jim},
+ title = {{Parallel Database Systems: {T}he Future of High Performance Database Systems}},
+ journal = CACM,
+ volume = {35},
+ number = {6},
+ month = jun,
+ year = {1992},
+}
+
+@inproceedings {SkewReduce,
+ title = {{Skew-Resistant Parallel Processing of Feature-Extracting Scientific User-Defined Functions}},
+ author = {YongChul Kwon and Magdalena Balazinska and Bill Howe and Jerome Rolia},
+ booktitle = SoCC,
+ year = {2010}
+}
+
+@inproceedings{SkewTune,
+ title = {{SkewTune: {M}itigating Skew in MapReduce Applications}},
+ author = {YongChul Kwon and Magdalena Balazinska and Bill Howe and Jerome Rolia},
+ booktitle = SIGMOD,
+ year = {2012}
 }
