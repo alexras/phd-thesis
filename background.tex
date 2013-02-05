@@ -1,2 +1,33 @@
 \chapter{Background}
 \label{chapter:background}
+
+This section makes the problem domains tackled by TritonSort and Themis more
+concrete, and describes the architectural features that both systems share in
+common.
+
+\section{Problem Formulation: Sorting}
+
+TritonSort seeks to meet the specifications laid out in the GraySort
+benchmark~\cite{terasort}. For this benchmark, records to be sorted consist of
+100 byte records, each of which has a 10-byte key and a 90-byte value. We
+target deployments with input datasets that are tens to hundreds of terabytes
+in size. Input data is stored as a collection of files across the cluster's
+disks. TritonSort's goal is to transform this input data set into an ordered
+set of output files, also stored across the cluster's disks, such that an
+in-order concatenation of these output files is a sorted permutation of the
+input data set.
+
+Sorting large datasets places great stress on a cluster's resources.  First,
+storing tens to hundreds of terabytes of data demands a large amount of storage
+capacity. Given the capacity of modern hard drives, the data must be stored
+across several drives and almost certainly across many machines. Second,
+performing reads and writes to all these disks simultaneously places load on
+both the disks themselves and the I/O controllers connecting them to the
+CPU. Third, since the records to be sorted are assumed to be distributed
+randomly across input files, almost all of the dataset to be sorted will have
+to be sent over the network at some point. Finally, comparing records requires
+a non-trivial amount of compute power. This combination of demands makes it
+challenging to design an efficient large-scale sorting system that utilizes the
+cluster's resources well.
+
+\section{Problem Formulation: MapReduce}

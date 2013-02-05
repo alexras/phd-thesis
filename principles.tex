@@ -1,0 +1,178 @@
+\chapter{Architectural and Design Principles}
+\label{chapter:principles}
+
+\section{Building a ``Balanced'' System}
+
+Both TritonSort and Themis aim to ensure good resource utilization by being
+``balanced'' systems. We define a balanced system as one that drives all
+cluster resources at as close to 100\% utilization as possible. For any given
+application and workload, there will be an ideal hardware configuration in
+keeping with the application's demands on a cluster's resources. In practice,
+however, the set of hardware configurations is limited by the availability of
+components; for example, one cannot currently buy a processor with precisely 13
+cores. As a result, a hardware configuration must be chosen that best meets the
+application's demands.  One the appropriate hardware configuration is
+determined, the application must be architected to suitably exploit the
+hardware's capabilities. In the following sections, we outline our
+considerations in designing a balanced system, including our choices of
+hardware and software architecture.
+
+\section{Design Considerations}
+
+Our system's design is motivated by three main considerations.  First, we rely
+only on commodity hardware components.  This is both to keep the costs of our
+system relatively low and to have our system be representative of today's data
+centers so that the lessons we learn can be applied to other applications with
+similar workload characteristics.  Hence, we do not make use of networking
+substrates like Infiniband that provide high network bandwidth at high cost.
+Also, despite the recent emergence of solid state drives (SSDs) that provide
+higher I/O rates, we chose to use hard disks because they continue to provide
+the most affordable option for high capacity storage and streaming I/O.  We
+believe that properly-architected data-intensive software should not stress
+random I/O behavior, where SSDs currently excel.
+
+Second, we focus our software architecture on minimizing both disk seeks and
+disk I/O.  In the particular hardware configuration we chose, the key
+bottleneck among the various system resources is disk I/O bandwidth.  Hence,
+the primary goal of the system is to enable all disks to operate continuously
+at peak bandwidth.  The main challenge in sustaining peak disk bandwidth is to
+minimize the amount of time the disks spend seeking, since any time
+seeking is not spent transferring data
+
+Additionally, we seek to minimize the number of times each record is
+transferred from disk.  Sorting data on clusters that have less memory than the
+total amount of data to be sorted requires every input record to be read and
+written at least twice~\cite{sort-io}.  Since a distributed sort by key is the
+kernel of any MapReduce job, this lower-bound also applies to MapReduce. Since
+every additional read and write increases the time to sort, we seek to achieve
+exactly this lower bound to maximize system performance.
+
+Third, we choose to focus on hardware architectures whose total memory cannot
+contain the entire dataset, because such a design would significantly drive up
+costs and be infeasible for input datasets at the scales that we consider in
+this dissertation. Significant improvements in I/O-efficiency are possible when
+the dataset fits in memory; we explore these implications briefly in
+Section~\ref{sec:minutesort}.
+
+\section{Hardware Architecture}
+
+To determine the right hardware configuration for our application, we make the
+following observations about our workloads. Since the ``working set'' for our
+data is so large, it does not make sense to separate the cluster into
+computation-heavy and storage-heavy regions. Instead, we provision each server
+in the cluster with an equal amount of processing power and disks.
+
+\begin{table}[t]
+\caption{Resource options considered for constructing a cluster for a
+  balanced sorting system.  These values are estimates as of January, 2010.}
+\label{tab:resourcesummary}
+\begin{center}
+\begin{tabular}{|c|c|c|c|}
+\hline
+\multicolumn{4}{|c|}{{\bf Storage}}\\
+\hline
+Type & Capacity & R/W throughput & Price\\
+\hline
+7.2k-RPM & 500 GB & 90-100 MBps & \$200\\
+\hline
+15k-RPM & 150 GB & 150 MBps & \$290\\
+\hline
+SSD     & 64 GB  & 250 MBps & \$450\\
+\hline
+\multicolumn{4}{c}{}\\
+\hline
+\multicolumn{4}{|c|}{{\bf Network}}\\
+\hline
+\multicolumn{3}{|c|}{Type} & Cost/port\\
+\hline
+\multicolumn{3}{|c|}{1 Gbps Ethernet} & \$33\\
+\hline
+\multicolumn{3}{|c|}{10 Gbps Ethernet} & \$480\\
+%\hline
+%\multicolumn{3}{|c|}{40 Gbps Ethernet} & \$ZZZ\\
+\hline
+\multicolumn{4}{c}{}\\
+\hline
+\multicolumn{4}{|c|}{{\bf Server}}\\
+\hline
+\multicolumn{3}{|c|}{Type} & Cost\\
+\hline
+\multicolumn{3}{|c|}{8 disks, 8 CPU cores} & \$5,050\\
+\hline
+\multicolumn{3}{|c|}{8 disks, 16 CPU cores} & \$5,450\\
+\hline
+\multicolumn{3}{|c|}{16 disks, 16 CPU cores} & \$7,550\\
+\hline
+\end{tabular}
+\end{center}
+\end{table}
+
+Second, almost all of the data needs to be exchanged between machines as part
+of the shuffle step of the computation.  To balance the system, we need to
+ensure that this all-to-all shuffling of data can happen in parallel without
+network bandwidth becoming a bottleneck.  Since we focus on using commodity
+components, we use an Ethernet network fabric.  Commodity Ethernet is available
+in a set of discrete bandwidth levels---1 Gbps, 10 Gbps, and 40 Gbps---with
+cost increasing proportional to throughput (see
+Table~\ref{tab:resourcesummary}).  Given our choice of 7.2k-RPM disks for
+storage, a 1 Gbps network can accommodate at most one disk per server without
+the network throttling disk I/O.  Therefore, we settle on a 10 Gbps network; 40
+Gbps Ethernet has yet to mature and hence is still cost-prohibitive.  To
+balance a 10 Gbps network with disk I/O, we use a server that can host 16
+disks.  Based on the options available commercially for such a server, we use a
+server that hosts 16 disks and 8 CPU cores.  The choice of 8 cores was driven
+by the available processor packaging: two physical quad-core CPUs.  The larger
+the number of separate threads, the more stages that can be isolated from each
+other.  In our experience, the actual speed of each of these cores was a
+secondary consideration, since the workloads we consider are mostly heavily
+I/O-bound.
+
+Third, our problem domains require both significant capacity and I/O
+requirements from storage, since tens to hundreds of TB of data is to be stored
+and all the data is to be read and written twice.  To determine the best
+storage option given these requirements, we survey a range of hard disk options
+shown in Table~\ref{tab:resourcesummary}.  We find that 7.2k-RPM SATA disks
+provide the most cost-effective option in terms of balancing cost per GB and
+cost per read/write MBps (assuming we can achieve streaming I/O).  To allow 16
+disks to operate at full streaming I/O throughput, we require storage
+controllers that are able to sustain at least 1600 MBps of streaming bandwidth.
+Our hardware design necessitated two 8x PCI drive controllers, each supporting
+8 disks, because of the PCI bus' bandwidth limitations.
+
+The final design choice in provisioning our cluster is the amount of memory
+each server should have.  The primary purpose of memory in our system is to
+enable large amounts of data buffering so that we can read from and write to
+the disk in large chunks.  The larger these chunks become, the more data can be
+read or written before seeking is required.  We initially provisioned each of
+our machines with 12 GB of memory; however, during development we realized that
+24 GB was required to provide sufficiently large writes, and so the machines
+were upgraded.  One of the key takeaways from our work is the important role
+that buffering plays in enabling high utilization of the network, disk, and
+CPU, and the efficient, dynamic management of that buffering is a key
+contribution of this work.
+
+\section{Software Architecture}
+
+TritonSort and Themis are staged, pipeline-oriented dataflow processing
+systems. Both systems are implemented as directed graphs of \emph{stages}. Each
+stage implements part of the data processing pipeline and either sources,
+sinks, or transmutes data flowing through it.
+
+Each stage is implemented by a collection of \emph{workers}, each of which is a
+separate thread. Workers receive input \emph{work units}, which are typically
+in-memory buffers, by dequeuing them from a collection of per-stage queues. In
+the process of running, a worker can produce work for a downstream stage, and
+optionally direct the worker to which that work should be directed. If a worker
+does not specify a destination worker, work units are assigned according to a
+per-stage work queueing policy that defaults to round-robin. All workers in a
+given stage graph run in parallel.
+
+When a work unit arrives, the worker executes a stage-specific \texttt{run()}
+method that implements the specific function of the stage. Workers process work
+in one of three ways. First, a worker can accept an individual work unit,
+execute the \texttt{run()} method over it, and then wait for new work. Second,
+it can accept a batch of work (up to a configurable size) that has been
+enqueued to one of its stage's queues. Lastly, it can keep its \texttt{run()}
+method active, polling for the presence of new work units
+explicitly. TritonSort and Themis contain examples of each of these three kinds
+of methods.

@@ -1,24 +1,24 @@
 % Put your maximum 350 word abstract here.
 \begin{dissertationabstract}
-As the volumes of data collected both by corporations and by
-scientific institutions grows, there is a growing need for scalable,
-data-intensive processing platforms to analyze and filter that data. The
-effectiveness of these systems is measured by the quantity and quality of data
-that they can process in a reasonable amount of time; thus, these systems have
-very high I/O and storage requirements.
+There is a growing need for scalable, data-intensive processing platforms to
+analyze and filter the large volume of data collected by both corporations and
+scientific institutions. The effectiveness of these systems is measured by the
+quantity and quality of data that they can process in a reasonable amount of
+time; thus, these systems have very high I/O and storage requirements.
 
 Existing systems are very effective at scaling to large cluster
 sizes. Unfortunately, there exists a significant gap between the performance
 these systems provide and the underlying capacity of the hardware
 infrastructure on which they are deployed.
 
-In this dissertation, I endeavor to bridge this performance gap. In particular,
-I present two systems, TritonSort and Themis. TritonSort is a high-performance
+In this dissertation, I endeavor to bridge this performance gap by focusing on
+efficient I/O as a first-class architectural concern. In particular, I present
+two systems, TritonSort and Themis. TritonSort is a high-performance
 large-scale sorting system capable of sorting 100TB of data on a modestly-sized
-cluster at about 82\% of that cluster's peak hardware performance. Themis is an
-extension of TritonSort that supports the popular MapReduce programming
+cluster at about 82\% of that cluster's peak hardware performance. Themis is a
+successor system to TritonSort that supports the popular MapReduce programming
 paradigm and can run a wide spectrum of MapReduce jobs at nearly the speed at
-which TritonSort can sort. I conclude with a discussion of the approach to
-fault tolerance taken by TritonSort and Themis.
-
+which TritonSort can sort. I conclude with the implementation of a fault
+tolerance scheme for Themis that provides proportional fault tolerance without
+imposing additional rounds of I/O during common-case operation.
 \end{dissertationabstract}

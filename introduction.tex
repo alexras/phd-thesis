@@ -1,10 +1,10 @@
 \chapter{Introduction}
 
 The quantity of data the world generates and stores is growing at a staggering
-pace. Online retailers like Amazon.com log users' purchase histories and
-interactions with their websites in order to target advertising to their
-particular interests. Walmart handles more than a million customer transactions
-per hour, and the size of its customer database is estimated at 2.5
+rate. Online retailers log users' purchase histories and interactions with
+their websites in order to target advertising to their particular
+interests. Walmart handles more than a million customer transactions per hour,
+and the size of its customer database is estimated at 2.5
 petabytes~\cite{economist-data-data-everywhere}. Search engines like Google
 construct complex indices over the entire public Internet, which is estimated
 to consist of at least 6.9 billion pages~\cite{worldwidewebsize}. Facebook's
@@ -15,22 +15,13 @@ telescopes can generate petabytes of data per day~\cite{fourth-paradigm}.
 
 Capturing this data, while a technically challenging feat in and of itself, is
 not enough. To be useful, this large volume of data must be analyzed,
-aggregated, filtered, and explored. This is no easy task. The aforementioned
-data sets are but a few examples of a new class of ``big data'' -- data sets
-that are so large and complex that they become difficult to process using
-existing techniques and technologies.
-
-\section{Definitions}
-
-For the remainder of this dissertation, I will assume that a data set consists
-of a large number of \emph{records}, each of which consists of a \emph{key} and
-a \emph{value}. A record with key $k$ and value $v$ will be denoted
-\kvpair{k}{v}. Both the key and the value can be arbitrary.
-
-\section{The Rise of Scale-Out Partition-Parallel Architectures}
+aggregated, filtered, transformed and explored. This is no easy task. The
+aforementioned data sets are but a few examples of a new class of ``big data''
+-- data sets that are so large and complex that they become difficult to
+process using traditional techniques and technologies.
 
 Some data-intensive problems allow every record to be processed in parallel
-without knowing anything about other record. These problems are known as
+without knowing anything about any other records. These problems are known as
 ``embarrassingly parallel'', and can be scaled out quite easily. For this class
 of problems, simply splitting the data into small pieces and running the
 desired computation over each piece is sufficient and can be scaled quite
@@ -47,6 +38,9 @@ word occurs in a corpus of text. The occurrences of each word can be counted in
 each document independently, but these counts must then be added
 together. Performing this aggregation efficiently is one of the primary
 challenges facing designers of systems for computing on ``big data''.
+
+\section{The Rise of Scale-Out Partition-Parallel Architectures}
+
 
 In recent years, a range of large-scale, data-intensive systems have been
 developed to tackle these kinds of workloads.  These systems work by
@@ -65,11 +59,16 @@ that have been passed through the \map function are said to have been
 \emph{mapped}, while those that have been passed through the \reduce function
 are said to have been \emph{reduced}.
 
-As an example, consider the problem of counting the occurrences of each word in
-a text corpus. For this problem, the user might write a \map function that takes
-a line of text as input and produces the record \kvpair{word}{1} for each word
-in the line. The \reduce function would receive all $n$ records for a given
-word, add their values together, and produce a single record \kvpair{word}{n}.
+MapReduce treats a data set as a collection of \emph{records}, each of which
+consists of a \emph{key} and a \emph{value}. Both the key and the value can be
+arbitrary. A record with key $k$ and value $v$ will be denoted \kvpair{k}{v}.
+
+A canonical example MapReduce job is the problem of counting the occurrences of
+each word in a text corpus. For this problem, the user might write a \map
+function that takes a line of text as input and produces the record
+\kvpair{word}{1} for each word in the line. The \reduce function would then
+receive all records for a given word, add their values together, and produce a
+single record \kvpair{word}{n}.
 
 MapReduce's strength lies in the simplicity of its programming model. Users of
 MapReduce need only write map and \reduce functions without concerning
@@ -85,20 +84,20 @@ of the web. Engineers at Yahoo! wrote an open-source version of MapReduce
 called Hadoop~\cite{hadoop} in 2005 that has since become extremely popular and
 is widely deployed in both academic and industrial settings.
 
-
 \section{Scale-Out, but not Scale-Up}
 
 While these systems scale quite well, they do not utilize their clusters'
 resources to nearly the extent that they should. As one example, a cluster of
 3452 nodes running Hadoop sorted 100 TB of data in 173
 minutes~\cite{hadoop-sort-2009}. At a high level, this performance is quite
-impressive -- an average of 578 GB of data sorted per minute. This high-level
-performance masks a great deal of inefficiency, however. In the aforementioned
-record-setting sort, each node in the cluster's average rate was approximately
-2.8 MBps, a small fraction of the speed at which that node's disks are able to
-read and write data. This performance difference is even more shocking when one
-considers that a significant fraction of the data (approximately 27 TB) could
-conceivably be buffered in the cluster's main memory for faster access.
+impressive -- an average of 578 GB of data sorted per minute. However, this
+high-level performance masks a great deal of inefficiency. In the
+aforementioned record-setting sort, each node in the cluster's average rate was
+approximately 2.8 MBps, a small fraction of the speed at which that can read
+from and write to its disks. This performance difference is even more shocking
+when one considers that a significant fraction of the data (approximately 27
+TB) could conceivably have been buffered in the cluster's main memory for
+faster access.
 
 These problems are not limited to Hadoop, however. Anderson and
 Tucek~\cite{efficiency-matters} examined a collection of large-scale
@@ -106,66 +105,71 @@ data-intensive processing systems and found a widespread lack of efficiency
 among them.
 
 \begin{table}
-\begin{tabular}{c|c|c|c|c|c|c|c}
+\caption{\label{table:system-efficiency} Large scale sorting results over time,
+  and their associated per-node and per-disk efficiency. Results extracted from
+  ~\cite{efficiency-matters, hadoop-sort-2009, themis, tritonsort}.}
+
+\begin{tabular}{|ccc|c|c|c|c|c|}
+\hline
 \textbf{Year} & \textbf{Name} & \textbf{Data Size} & \textbf{Nodes} & \textbf{Disks} & \textbf{MB/s} & \textbf{MB/s/node} & \textbf{MB/s/disk}\\
 \hline
 2012 & Themis & 35TB & 20 & 320 & 4656 & 232.8 & 14.6 \\
 2011 & Themis & 100TB & 52 & 832 & 12080 & 232.4 & 14.5 \\
 2011 & TritonSort & 100TB & 52 & 832  & 15633 & 300.6 & 18.8 \\
 2009 & Hadoop & 100TB & 3452 & 13808 & 9633 & 2.79 & 0.69 \\
-2009 & DEMSort & 100TB & 195 & 780 & 9400 & 48.2 & 12.1
+2009 & DEMSort & 100TB & 195 & 780 & 9400 & 48.2 & 12.1\\
+\hline
 \end{tabular}
-\caption{\label{table:system-efficiency} Large scale sorting results over time,
-  and their associated per-node and per-disk efficiency. Results extracted from
-  ~\cite{efficiency-matters, hadoop-sort-2009, themis, tritonsort}.}
 \end{table}
 
 The tempting solution to the problem of low efficiency is to simply increase
 the size of the cluster. Splitting the data being processed among progressively
-more machines decreases both the amount of data that each node must process and
-(at least to a degree) increases the throughput of the system. However, this
-approach has several negative consequences.
+more nodes decreases both the amount of data that each node must process and
+(to the extent allowed by Amdahl's Law~\cite{amdahls_law}) increases the
+throughput of the system. However, this approach has several negative
+consequences.
 
 Larger clusters have a proportionally large associated capital expense and
 operational cost. Google, one of the pioneers of the current wave of largest
 data-intensive systems, has contracted over 260MW to power its data
-centers~\cite{google-dc-power-blog}. When it filed for IPO in 2011, Facebook
+centers~\cite{google-dc-power-blog}. When it filed its IPO in 2011, Facebook
 reported that it spent \$606 million on constructing and equipping its data
 centers in 2011 and expected to spend another \$500 million in
-2012~\cite{facebook-ipo}. As the size of problems to be solved increases, these
-expenses can only increase. These large data centers also have an environmental
-cost. McKinsey and Company estimates that the carbon dioxide emissions from
-data centers will surpass emissions from the airline industry by
-2020~\cite{mckinsey-co2-study}.  Further, larger clusters are harder to manage
-and experience faults more frequently than smaller clusters do because of the
-increased number of nodes in those clusters. We will explore the implications
-of increased failure further in Chapter~\ref{chapter:fault_tolerance}.
+2012~\cite{facebook-ipo}. As problem sizes increase, these expenses must also
+increase.
+
+Large data centers also have an environmental cost. McKinsey and Company
+estimates that the carbon dioxide emissions from data centers will surpass
+emissions from the airline industry by 2020~\cite{mckinsey-co2-study}.
+Further, larger clusters are harder to manage and experience faults more
+frequently than smaller clusters do because of the increased number of nodes in
+those clusters. We will explore the implications of increased failure further
+in Chapters~\ref{chapter:themis} and~\ref{chapter:fault_tolerance}.
 
 \section{Sources of Inefficiency in Existing Systems}
 
 While a thorough study of the sources of per-node inefficiency in existing
-systems has not been performed, we can broadly classify two different sources
+systems has not been performed, we can broadly classify three different sources
 of inefficiency in systems that are I/O-bound:
 
-\paragraph{Inefficient I/O} Current-generation large scale data processing
-systems read data from and write data to large collections of magnetic hard
-drives. These magnetic drives are characterized by their fast sequential access
-and slow random access. Fundamentally, systems that desire a high throughput
-from these devices should write to them sequentially as much as possible.
+\paragraph{Inefficient I/O} Current-generatione large scale data processing
+systems read from and write to large collections of magnetic hard drives. These
+magnetic drives are characterized by their fast sequential access and slow
+random access. Fundamentally, systems that desire a high throughput from these
+devices should write to them sequentially as much as possible.
 
-\paragraph{Too much I/O per record} In response to memory pressure, existing
+\paragraph{Too much I/O per record} Existing
 systems may read and write each record to disk several times before processing
-is complete. These additional reads and writes incur significant additional
-overhead, as disk is at least an order of magnitude slower than main memory or
-network transfer.
+is complete, either due to memory pressure or for fault tolerance. These
+additional reads and writes incur significant additional overhead, as disk is
+at least an order of magnitude slower than main memory or network transfer.
 
-\paragraph{Imbalanced hardware configurations} \textbf{**Rough**} Often, the hardware platform on
-which these systems are deployed are configured such that the application
-cannot write to a node's hard drives at full speed. This is usually due to
-insufficient network bandwidth and memory to allow the application to move data
-from its local hard drives over the network to those of a remote node.
-MapReduce, for example, runs into this problem if it can't move mapped records
-to the appropriate destination node fast enough.
+\paragraph{Imbalanced hardware configurations} Often, the hardware platforms on
+which these systems are deployed are configured such that the system will run
+out of network bandwidth or memory before they can maximize their disks'
+throughput. This dissertation argues that a degree of software/hardware
+co-design can lead to radically more efficient software and hardware
+architectures.
 
 \section{Hypothesis}
 
@@ -174,16 +178,16 @@ I/O as a first-order architectural concern can realize an order of magnitude
 improvement in performance versus existing large-scale data-intensive systems
 without compromising their scalability or generality.
 
-This dissertation argues that the chief challenges of building such a system
-lie both in minimizing the number of I/O operations per record and in ensuring
-that disk I/O is done sequentially as much as possible. This dissertation also
-argues that significant increases in per-node efficiency can be realized by
+In this dissertation, we argue that the chief challenges of building such a
+system lie both in minimizing the number of I/O operations per record and in
+ensuring that disk I/O is done sequentially as much as possible. We also argue
+that significant increases in per-node efficiency can be realized by
 considering alternative fault tolerance models to the task-level fault
 tolerance schemes present in modern data-intensive systems.
 
-We explore the design of such a system in this dissertation through two main
-systems: TritonSort, a large-scale sorting system, and Themis, a large-scale
-MapReduce system.
+We explore the design of radically more efficient data processing systems
+through two main prototype systems: TritonSort, a large-scale sorting system,
+and Themis, a large-scale MapReduce system.
 
 \section{Organization}
 
@@ -191,18 +195,22 @@ TritonSort and Themis have each improved on the performance of systems in their
 respective problem domains by almost an order of magnitude, approaching the
 maximum throughput possible on the clusters on which they are
 deployed. Further, we have demonstrated both analytically and experimentally
-that a range of different fault tolerance schemes that incur less I/O than
-the traditional task-based approach to fault tolerance are practical for a
-wide-range of MapReduce deployments.
+that a range of different fault tolerance schemes that incur less I/O than the
+traditional task-based approach to fault tolerance are practical for a
+wide-range of MapReduce deployments, and implemented a fault tolerance scheme
+that does not impose additional rounds of disk I/O during failure-free
+operation.
 
-In Chapter~\ref{chapter:background}, we provide background on the problem
-domains of large-scale sorting and MapReduce, as well as providing an overview
-of the architecture that underpins both TritonSort and Themis.
-Chapter~\ref{chapter:related} explores related work. In
-Chapter~\ref{chapter:tritonsort}, we describe the design and implementation of
-TritonSort. Chapter~\ref{chapter:themis} presents the design and implementation
-of Themis, focusing in particular on its differences from TritonSort's
-design. In Chapter~\ref{chapter:fault_tolerance}, we take an in-depth look at
-fault tolerance in Themis, looking first at the trade-off between fault
-tolerance and I/O-efficiency, and then examining a few approaches to fault
-tolerance.\textbf{**Rough**}
+Chapter~\ref{chapter:background} provides background on the problem domains of
+large-scale sorting and MapReduce. Chapter~\ref{chapter:principles} provides an
+overview of the architecture and design principles that underpin the systems
+presented in this dissertation. Chapter~\ref{chapter:related} explores related
+work.  Chapter~\ref{chapter:tritonsort} presents the design and implementation
+of TritonSort. Chapter~\ref{chapter:themis} presents the design and
+implementation of Themis, focusing in particular on its differences from
+TritonSort's design. Chapter~\ref{chapter:fault_tolerance} takes an in-depth
+look at fault tolerance in Themis, looking first at the trade-off between fault
+tolerance and I/O-efficiency, and then presenting the design and implementation
+of an I/O-efficient fault tolerance scheme for Themis. The dissertation
+concludes with Chapter~\ref{chapter:conclusions}, which describes some open
+problems and future directions.
