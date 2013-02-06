@@ -31,3 +31,27 @@ challenging to design an efficient large-scale sorting system that utilizes the
 cluster's resources well.
 
 \section{Problem Formulation: MapReduce}
+
+As mentioned in Chapter~\ref{chapter:introduction}, a MapReduce computation is
+specified by two functions, \map and \reduce, with \map responsible for
+per-record processing and \reduce responsible for aggregation. Throughout this
+dissertation we will refer to records that are produced by the \map function as
+\emph{intermediate records} or \emph{mapped records} and records produced by
+the \reduce function as \emph{output records} or \emph{reduced records}.
+
+The \map and \reduce functions can produce an arbitrary number of
+arbitrarily-sized records. This is in sharp contrast to the GraySort benchmark,
+where records can be assumed to be the same size. Additionally, keys can be
+arbitrarily distributed throughout the space of possible keys. This makes the
+problem of evenly dividing key ranges among nodes difficult, as we will see in
+Chapter~\ref{chapter:themis}.
+
+Since each \reduce function is responsible for processing all records with the
+same key, the system running a MapReduce job must ensure that all records with
+the same key are available on the same node. This property requires that the
+system perform a distributed sort of all intermediate records by key before
+applying the \reduce function to each key's records. In this way, the problem
+of efficiently running MapReduce jobs is a superset of the problem of
+efficiently sorting at scale. As we will see later in this dissertation, we
+applied many of the lessons learned in designing an efficient large-scale
+sorting system to the problem of building an efficient MapReduce platform.

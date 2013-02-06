@@ -5,11 +5,14 @@
 @string{VLDB = "Conference on Very Large Databases (VLDB)"}
 @string{OSDI = "USENIX Symposium on Operating Systems Design and Implementation (OSDI)"}
 @string{SOSP = "ACM Symposium on Operating Systems Principles (SOSP)"}
-@string{EuroSys = "EuroSys"}
-@string{TKDE = "TKDE"}
-@string{ACM_CSUR = "ACM CSUR"}
-@string{ICDE = "ICDE"}
+@string{EuroSys = "European Conference on Computer Systems (EuroSys)"}
+@string{TKDE = "IEEE Transactions on Knowledge and Data Engineering (TKDE)"}
+@string{ACM_CSUR = "ACM Computing Surveys"}
+@string{ICDE = "IEEE International Conference on Data Engineering (ICDE)"}
 @string{CACM = "Communications of the ACM"}
+@string{TODS = "ACM Transactions on Database Systems (TODS)"}
+@string{SIGOPSOSR = "SIGOPS Operating Systems Review"}
+@string{VLDBEndowment = "Proceedings of the VLDB Endowment"}
 
 @inproceedings{tritonsort,
    author = "Alexander Rasmussen and George Porter and Michael Conley and Harsha V. Madhyastha and Radhika Niranjan Mysore and Alexander Pucher and Amin Vahdat",
@@ -233,13 +236,6 @@ year = {1998}
  year = {2012}
 }
 
-@inproceedings{flux,
- title = {{Flux: An Adaptive Partitioning Operator for Continuous Query Systems}},
- author = {Mehul A. Shah and Joseph M. Hellerstein and Sirish Chandrasekaran and Michael J. Franklin},
- booktitle = ICDE,
- year = {2003}
-}
-
 @misc{roc,
 author = {{Recovery-Oriented Computing}},
 howpublished = {\url{http://roc.cs.berkeley.edu/}}
@@ -276,7 +272,7 @@ howpublished = {\url{http://roc.cs.berkeley.edu/}}
 @inproceedings {tenzing,
  title = {{Tenzing: A SQL Implementation On The MapReduce Framework}},
  author = {Biswapesh Chattopadhyay and Liang Lin and Weiran Liu and Sagar Mittal and Prathyusha Aragonda and Vera Lychagina and Younghee Kwon and Michael Wong},
- booktitle = {{Proceedings of the VLDB Endowment}},
+ booktitle = VLDBEndowment,
  year = {2011}
 }
 
@@ -335,4 +331,164 @@ title={Validity of the single processor approach to achieving large scale comput
 author={Gene Amdahl},
 year={1967},
 booktitle={AFIPS Spring Joint Computer Conference}
+}
+
+@techreport{pagerank,
+number = {1999-66},
+month = {November},
+author = {Lawrence Page and Sergey Brin and Rajeev Motwani and Terry Winograd},
+note = {Previous number = SIDL-WP-1999-0120},
+title = {{The PageRank Citation Ranking: Bringing Order to the Web}},
+publisher = {Stanford InfoLab},
+year = {1999},
+institution = {Stanford InfoLab},
+url = {http://ilpubs.stanford.edu:8090/422/},
+}
+
+@inproceedings{flux,
+ title = {{Highly-Available, Fault-Tolerant, Parallel Dataflows}},
+ author = {Mehul A. Shah and Joseph M. Hellerstein and Eric Brewer},
+ booktitle = SIGMOD,
+ year = {2004}
+}
+
+@article{sort-io,
+ author = {Alok Aggarwal and Jeffrey Vitter},
+ title = {{The Input/Output Complexity of Sorting and Related Problems}},
+ journal = CACM,
+ issue_date = {Sept. 1988},
+ volume = {31},
+ number = {9},
+ month = sep,
+ year = {1988},
+ issn = {0001-0782},
+ pages = {1116--1127},
+ numpages = {12},
+ url = {http://doi.acm.org/10.1145/48529.48535},
+ doi = {10.1145/48529.48535},
+ acmid = {48535},
+ publisher = {ACM},
+ address = {New York, NY, USA},
+}
+
+@inproceedings{ko-intermediate,
+ author = {Ko, Steven Y. and Hoque, Imranul and Cho, Brian and Gupta, Indranil},
+ title = {{Making Cloud Intermediate Data Fault-Tolerant}},
+ booktitle = SoCC,
+year={2010}
+}
+
+@inproceedings{hop,
+ author = {Condie, Tyson and Conway, Neil and Alvaro, Peter and Hellerstein, Joseph M. and Elmeleegy, Khaled and Sears, Russell},
+ title = {{MapReduce Online}},
+ booktitle = NSDI,
+year={2010}
+}
+
+@ARTICLE{Bose05lineageretrieval,
+    author = {Rajendra Bose and James Frew},
+    title = {{Lineage Retrieval for Scientific Data Processing: A Survey}},
+    journal = {{ACM Computing Surveys}},
+    year = {2005},
+    volume = {37}
+}
+
+@article{cui_lineage,
+ author = {Cui, Yingwei and Widom, Jennifer and Wiener, Janet L.},
+ title = {{Tracing the Lineage of View Data in a Warehousing Environment}},
+ journal = TODS,
+ issue_date = {June 2000},
+ volume = {25},
+ number = {2},
+ month = jun,
+ year = {2000},
+ issn = {0362-5915},
+ numpages = {49},
+ url = {http://doi.acm.org/10.1145/357775.357777},
+ doi = {10.1145/357775.357777},
+ acmid = {357777},
+ publisher = {ACM},
+ address = {New York, NY, USA},
+ keywords = {data warehouse, derviation, lineage, materialized views},
+}
+
+@INPROCEEDINGS{Xu06taint-enhancedpolicy,
+    author = {Wei Xu and Eep Bhatkar and R. Sekar},
+    title = {{Taint-Enhanced Policy Enforcement: A Practical Approach to Defeat a Wide Range of Attacks}},
+    booktitle = {{USENIX Security Symposium}},
+    year = {2006},
+}
+
+@article{ako08,
+ author = {Agrawal, Parag and Kifer, Daniel and Olston, Christopher},
+ title = {{Scheduling Shared Scans of Large Data Files}},
+ journal = {Proceedings of the VLDB Endowment},
+ issue_date = {August 2008},
+ volume = {1},
+ number = {1},
+ month = aug,
+ year = {2008},
+ issn = {2150-8097},
+ pages = {958--969},
+ numpages = {12},
+ url = {http://dx.doi.org/10.1145/1453856.1453960},
+ doi = {10.1145/1453856.1453960},
+ acmid = {1453960},
+ publisher = {VLDB Endowment},
+}
+
+@article{circumflex,
+ author = {Wolf, Joel and Balmin, Andrey and Rajan, Deepak and Hildrum, Kirsten and Khandekar, Rohit and Parekh, Sujay and Wu, Kun-Lung and Vernica, Rares},
+ title = {{CIRCUMFLEX: A Scheduling Optimizer for MapReduce Workloads with Shared Scans}},
+ journal = SIGOPSOSR,
+ issue_date = {January 2012},
+ volume = {46},
+ number = {1},
+ month = feb,
+ year = {2012},
+ issn = {0163-5980},
+ numpages = {7},
+ url = {http://doi.acm.org/10.1145/2146382.2146388},
+ doi = {10.1145/2146382.2146388},
+ acmid = {2146388},
+ publisher = {ACM},
+ address = {New York, NY, USA},
+}
+
+@techreport{upenn-scanshare,
+ title = {{Processing Data-intensive Workows in the Cloud}},
+ author = {Zhuoyao Zhang},
+ number = {2012-970},
+ institution = {University of Pennsylvania},
+ year = {2012}
+}
+
+@article{mrshare,
+ author = {Nykiel, Tomasz and Potamias, Michalis and Mishra, Chaitanya and Kollios, George and Koudas, Nick},
+ title = {{MRShare: Sharing Across Multiple Queries in MapReduce}},
+ journal = VLDBEndowment,
+ issue_date = {September 2010},
+ volume = {3},
+ number = {1-2},
+ month = sep,
+ year = {2010},
+ issn = {2150-8097},
+ pages = {494--505},
+ numpages = {12},
+ url = {http://dl.acm.org/citation.cfm?id=1920841.1920906},
+ acmid = {1920906},
+ publisher = {VLDB Endowment},
+}
+
+@inproceedings{sailfish,
+ title = {Sailfish: A Framework for Large Scale Data Processing},
+ author = {Sriram Rao and Raghu Ramakrishnan and Adam Silberstein and Mike Ovsiannikov and Damian Reeves},
+booktitle=SoCC,
+ year = {2012}
+}
+
+@misc{terasort,
+  key =          {sort},
+  title =        {{Sort Benchmark Home Page}},
+  note =         {\url{http://sortbenchmark.org/}}
 }

@@ -1,4 +1,5 @@
 \chapter{Introduction}
+\label{chapter:introduction}
 
 The quantity of data the world generates and stores is growing at a staggering
 rate. Online retailers log users' purchase histories and interactions with
@@ -108,16 +109,16 @@ among them.
 \caption{\label{table:system-efficiency} Large scale sorting results over time,
   and their associated per-node and per-disk efficiency. Results extracted from
   ~\cite{efficiency-matters, hadoop-sort-2009, themis, tritonsort}.}
-
-\begin{tabular}{|ccc|c|c|c|c|c|}
+\centering
+\begin{tabular}{|c|c|c|c|c|c|c|c|}
 \hline
-\textbf{Year} & \textbf{Name} & \textbf{Data Size} & \textbf{Nodes} & \textbf{Disks} & \textbf{MB/s} & \textbf{MB/s/node} & \textbf{MB/s/disk}\\
+\textbf{Year} & \textbf{Name} & \textbf{Nodes} & \textbf{Disks} & \textbf{MB/s} & \textbf{MB/s/node} & \textbf{MB/s/disk}\\
 \hline
-2012 & Themis & 35TB & 20 & 320 & 4656 & 232.8 & 14.6 \\
-2011 & Themis & 100TB & 52 & 832 & 12080 & 232.4 & 14.5 \\
-2011 & TritonSort & 100TB & 52 & 832  & 15633 & 300.6 & 18.8 \\
-2009 & Hadoop & 100TB & 3452 & 13808 & 9633 & 2.79 & 0.69 \\
-2009 & DEMSort & 100TB & 195 & 780 & 9400 & 48.2 & 12.1\\
+2012 & Themis (35TB) & 20 & 320 & 4656 & 232.8 & 14.6 \\
+2011 & Themis & 52 & 832 & 12080 & 232.4 & 14.5 \\
+2011 & TritonSort & 52 & 832  & 15633 & 300.6 & 18.8 \\
+2009 & Hadoop & 3452 & 13808 & 9633 & 2.79 & 0.69 \\
+2009 & DEMSort & 195 & 780 & 9400 & 48.2 & 12.1\\
 \hline
 \end{tabular}
 \end{table}

@@ -53,29 +53,49 @@ distribution from the rest of the system.
 
 \section{Fault Tolerance Techniques}
 
-There is a large continuum of fault tolerance options between task-level
-restart and job-level restart, including distributed
-transactions~\cite{percolator}, checkpointing and
-rollback~\cite{Elnozahy:2002:SRP:568522.568525}, lineage-based
-recovery~\cite{spark} and process-pairs replication~\cite{flux}. Each fault
-tolerance approach introduces its own overheads and has its own complexities
-and limitations.  With Themis, we choose to focus our efforts on creating a
-MapReduce system model that is able to handle large real-world data sets while
-utilizing the resources of an existing cluster as much as possible.
+There is a large continuum of fault tolerance options between task-level and
+job-level fault tolerance.  Percolator~\cite{percolator} provides
+ACID-compliant transactions with snapshot-isolation semantics on its
+multi-petabyte document repository. Checkpointing and rollback is another
+popular form of fault tolerance; we refer the reader
+to~\cite{Elnozahy:2002:SRP:568522.568525} for a survey of different techniques
+in this space.  FLuX~\cite{flux} uses process-pairs replication to ensure that
+if one of the two replicas fails, data processing can still continue seamlessly.
 
-Recovery-Oriented Computing (ROC)~\cite{roc,microreboot} is a research vision
+Several efforts have been made to increase the resilience of intermediate data
+without dramatically impacting performance. ISS~\cite{ko-intermediate} provides
+a replicated storage layer that increases the failure resilience of
+intermediate and output data by asynchronously replicating it.  HOP~\cite{hop}
+pipelines the transmission of intermediate data from map tasks to reduce tasks
+with its materialization to local disk, only acting on optimistically
+transmitted data when it has been ``committed'' at the source.
+
+Lineage has long been of interest to a
+wide range of fields, in areas as diverse as ensuring that research results can
+be reproduced~\cite{Bose05lineageretrieval}, determining which source records
+contributed to a record in a materialized view~\cite{cui_lineage}, and policy
+enforcement~\cite{Xu06taint-enhancedpolicy}. Spark~\cite{spark} uses lineage at
+the RDD level to provide fault tolerance for RDDs.
+
+Recovery-Oriented Computing (ROC)~\cite{microreboot,roc} is a research vision
 that focuses on efficient recovery from failure, rather than focusing
 exclusively on failure avoidance.  This is helpful in environments where
 failure is inevitable, such as data centers.  The design of task-level fault
-tolerance in existing MapReduce implementations shares similar goals with the ROC
-project.
+tolerance in existing MapReduce implementations shares similar goals with the
+ROC project.
 
-Sailfish~\cite{sailfish} aims to mitigate partitioning skew in MapReduce by
-choosing the number of reduce tasks and intermediate data partitioning
-dynamically at runtime. It chooses these values using an index constructed on
-intermediate data. Sailfish and Themis represent two design points in a space
-with the similar goal of improving MapReduce's performance through more
-efficient disk I/O.
+\section{Multi-Query Optimization and Scan Sharing}
+
+In the MapReduce context, multi-query optimization typically focuses on
+reducing the number of I/O operations required to execute a set of jobs.
+Agrawal, Kifer and Olson~\cite{ako08}'s scheduling approach for MapReduce
+decides whether to try to delay jobs for possible scan sharing based on a model
+of job arrival times and input file access patterns.
+Circumflex~\cite{circumflex} builds upon this work by relaxing some of the
+modeling assumptions.  In ~\cite{upenn-scanshare}, Zhang proposes a cost
+function for estimating the savings from scan sharing.  MRShare~\cite{mrshare}
+applies multi-query optimization to Hadoop, rewriting jobs that arrive in
+batches so that they share input data scans.
 
 \section{Improving MapReduce's Performance}
 
@@ -118,3 +138,10 @@ users.  SkewTune is activated when a slot becomes idle in the cluster, and
 the task with the greatest estimated remaining time is repartitioned to take
 advantage of that slot.  This reallocates the unprocessed input data through
 range-partitioning, similar to Themis's phase zero.
+
+Sailfish~\cite{sailfish} aims to mitigate partitioning skew in MapReduce by
+choosing the number of reduce tasks and intermediate data partitioning
+dynamically at runtime. It chooses these values using an index constructed on
+intermediate data. Sailfish and Themis represent two design points in a space
+with the similar goal of improving MapReduce's performance through more
+efficient disk I/O.
