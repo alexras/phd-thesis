@@ -1,0 +1,37 @@
+\section{Introduction}
+\label{sec:intro}
+
+In this work we present \tritonsort, a highly efficient sorting system designed
+to sort large volumes of data across dozens of nodes. We have applied it to
+data sets as large as 100 terabytes spread across \tsdisks disks in \tsnodes
+nodes.  The key to \tritonsort's efficiency is its \textit{balanced} software
+architecture, which is able to effectively make use of a large amount of
+co-located storage per node, ensuring that the disks are kept as utilized as
+possible.  Our results show the benefit of our design: evaluating \tritonsort
+against the `Indy' GraySort benchmark\cite{terasort} resulted in a system that
+was able to sort 100TB of input records in about \tspercent of the absolute time
+of the previous record-holder, but with four times fewer resources, resulting
+in an increase in per-node efficiency by over a factor of \tsimprovementfactor.
+
+It is important to note that our focus in building \tritonsort is to highlight
+the efficiency gains that can be obtained in building systems that process
+significant amounts of data through balancing computation, storage, memory, and
+network.  Systems such as Hadoop and Dryad further support data-level
+replication, transparent node failure, and a generalized computational model,
+all of which are not currently present in \tritonsort.  However, in presenting
+\tritonsort's hardware and software architecture, we describe several lessons
+learned in its construction that we believe are generalizable to other data
+processing systems.  For example, our design relies on a very high disk-to-node
+ratio as well as an explicit, application-level management of in-memory buffers
+to minimize disk seeks and thus increase read and write throughput.  We choose
+buffer sizes to balance time spent processing multiple stages of our sort
+pipeline, and trade off the utilization of one resource for another.
+
+Our experiences show that for a common datacenter workload, systems can be
+built with commodity hardware and open-source software that improve on per-node
+efficiency by an order of magnitude while still achieving scalability.
+Building such systems will either enable significantly cheaper systems to be
+able to do the same work or provide the ability to address significantly larger
+problem sets with the same infrastructure.
+
+% LocalWords:  Google Mbps GraySort records pipelined LocalWords

@@ -1,2 +1,62 @@
 \chapter{TritonSort: I/O-Efficient Large-Scale Sorting}
 \label{chapter:tritonsort}
+
+%% Since we seem to be mentioning these numbers everywhere in the paper,
+%% thought we should make them variables
+\def\tsrateTBM{0.916\xspace}
+\def\tsrate{916\xspace}
+\def\tsnodes{52\xspace}
+\def\tsdisks{832\xspace}
+\def\tsimprovementfactor{six\xspace}
+\def\tspercent{60\%\xspace}
+\def\tsPercentofSequential{80\%\xspace}
+
+\def\tilde{\texttildelow}
+\def\producerbuffer{ProducerBuffer\xspace}
+\def\producerbuffers{ProducerBuffers\xspace}
+\def\nodebuffer{NodeBuffer\xspace}
+\def\nodebuffers{NodeBuffers\xspace}
+\def\ldbuffer{LDBuffer\xspace}
+\def\ldbuffers{LDBuffers\xspace}
+\def\writerbuffer{WriterBuffer\xspace}
+\def\writerbuffers{WriterBuffers\xspace}
+\def\phasetwobuffer{PhaseTwoBuffer\xspace}
+\def\reader{Reader\xspace}
+\def\readers{Readers\xspace}
+\def\sender{Sender\xspace}
+\def\senders{Senders\xspace}
+\def\pnts{NodeDistributor\xspace}
+\def\pntss{NodeDistributors\xspace}
+\def\ldts{LogicalDiskDistributor\xspace}
+\def\ldtss{LogicalDiskDistributors\xspace}
+\def\workertracker{WorkerTracker\xspace}
+\def\connector{Connector\xspace}
+\def\receiver{Receiver\xspace}
+\def\receivers{Receivers\xspace}
+\def\coalescer{Coalescer\xspace}
+\def\coalescers{Coalescers\xspace}
+\def\writer{Writer\xspace}
+\def\writers{Writers\xspace}
+\def\sorter{Sorter\xspace}
+\def\sorters{Sorters\xspace}
+\def\ldtable{LDBufferTable\xspace}
+\def\naive{na\"{\i}ve\xspace}
+
+% Prevent PhaseTwoBuffer from being incorrectly hyphenated
+\hyphenation{Phase-Two-Buffer Logical-Disk-Distributor}
+
+This chapter presents \tritonsort, a highly efficient, scalable sorting system.
+It is designed to process large datasets, and has been evaluated against as
+much as 100 TB of input data spread across \tsdisks disks in \tsnodes nodes at
+a rate of \tsrateTBM TB/min.  When evaluated against the annual Indy GraySort
+sorting benchmark, \tritonsort is \tspercent better in absolute performance and
+has over \tsimprovementfactor times the per-node efficiency of the previous
+record holder.  In this paper, we describe the hardware and software
+architecture necessary to operate \tritonsort at this level of efficiency.
+Through careful management of system resources to ensure cross-resource
+balance, we are able to sort data at approximately \tsPercentofSequential of
+the disks' aggregate sequential write speed.
+
+\input{tritonsort/intro}
+\input{tritonsort/challenges}
+\input{tritonsort/arch}

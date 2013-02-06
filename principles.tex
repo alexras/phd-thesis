@@ -176,3 +176,20 @@ enqueued to one of its stage's queues. Lastly, it can keep its \texttt{run()}
 method active, polling for the presence of new work units
 explicitly. TritonSort and Themis contain examples of each of these three kinds
 of methods.
+
+To maximize cluster resource utilization, we need to design an appropriate
+software architecture.  There are a range of possible software architectures in
+keeping with our constraint of reading and writing every input tuple at most
+twice.  The class of architectures upon which we focus share a similar basic
+structure. These architectures consist of two phases separated by a distributed
+barrier, so that all nodes must complete phase one before phase two begins.  In
+the first phase, input data is read in parallel from the cluster's disks and
+processed to produce intermediate data that is then routed to the node upon
+which it will ultimately reside.  Each node is responsible for storing a
+disjoint portion of the key space.  When data arrives at its destination node,
+that node writes the data to its local disks.  In the second phase, each node
+sorts the data on its local disks in parallel.  If running a MapReduce job, any
+\reduce function processing occurs at this point. At the end of the second
+phase, each node has a portion of the final output data set stored on its local
+disks. In the case of sort, the sorted output partitions stored on all nodes
+can be concatenated together to form the final sorted sequence.
