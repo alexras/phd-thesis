@@ -37,9 +37,9 @@ as hardware capabilities have increased.
 The staged, pipelined dataflow architecture used in both TritonSort and Themis
 is inspired in part by SEDA\cite{seda}, a staged, event-driven software
 architecture that decouples worker stages by interposing queues between them.
-Other DISC systems such as Dryad~\cite{dryad} export a similar model, although
-Dryad has fault-tolerance and data redundancy capabilities that TritonSort and
-Themis do not currently implement.
+Data-intensive systems like Dryad~\cite{dryad} export a similar model, although
+Dryad has several capabilities that TritonSort and Themis do not currently
+implement.
 
 Many of our design decisions are informed by lessons learned from parallel
 database systems.  Gamma\cite{gamma} was one of the first parallel database

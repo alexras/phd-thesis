@@ -42,10 +42,9 @@ disks such that the $k^{th}$ logical disk holds records in the $k^{th}$
 division.  Sorting each logical disk produces a collection of output files,
 each of which contains sorted records in a given partition.  Hence, the ordered
 collection of output files represents the sorted version of the data.  In this
-paper, we assume that records' keys are distributed uniformly over the key range
-which ensures that each logical disk is approximately the same size; we discuss
-how \tritonsort can be made to handle non-uniform key ranges in
-Section~\ref{sec:discussion:general_sort}.
+paper, we assume that records' keys are distributed uniformly over the key
+range which ensures that each logical disk is approximately the same size; we
+discuss how to handle non-uniform key ranges in Chapter~\ref{chapter:themis}.
 
 To ensure that we can utilize as much read/write bandwidth as possible on each
 disk, we partition the disks on each node into two groups of 8 disks each. One
@@ -63,7 +62,7 @@ which prevents unnecessary seeking.
 \begin{figure*}
   \centering \includegraphics[width=\textwidth]{tritonsort/figs/phase1.pdf}
 
-  \caption{ Block diagram of \tritonsort's phase one architecture.  The
+  \caption{Block diagram of \tritonsort's phase one architecture.  The
     number of workers for a stage is indicated in the lower-right corner of
     that stage's block, and the number of disks of each type is indicated in
     the lower-right corner of that disk's block.}
@@ -72,8 +71,8 @@ which prevents unnecessary seeking.
 \end{figure*}
 
 Phase one of \tritonsort, diagrammed in Figure~\ref{fig:phase1}, is responsible
-for reading input records off of the input disks, distributing those records over
-to the network to the nodes on which they belong, and storing them into
+for reading input records off of the input disks, distributing those records
+over to the network to the nodes on which they belong, and storing them into
 the logical disks in which they belong.
 
 \paragraph{\reader:} Each \reader is assigned an input disk and

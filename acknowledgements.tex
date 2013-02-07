@@ -15,34 +15,51 @@ I would also like to acknowledge George Porter, whose herculean efforts in
 co-authorship, cluster management, grant writing and advising have helped
 both myself and many others beyond measure.
 
-This dissertation would not have been possible without the hard work and
-support of my co-authors. Thank you all. Special thanks to Mike Conley, for
-writing a ton of fantastic code and steering the ship of systems architecture
-along with me.
+Most computer science departments dream of having a system administrator as
+deeply knowledgeable and accommodating as Brian Kantor. Thanks for fighting the
+never-ending battle against entropy, and giving me a bucket to put my dead hard
+drives in.
 
-Many thanks to my friends, both inside and outside UCSD, who have given me
-their unwavering support for so many years. I am profoundly blessed to have all
-of you in my life.
+This dissertation would not have been possible without the hard work and
+support of my co-authors, whom I would like to acknowledge
+individually. Michael Conley was heavily involved in both the TritonSort and
+Themis efforts, and wrote Themis' constraint-based memory management system and
+the current record-setting MinuteSort implementation. His determination and
+enthusiasm were valuable beyond expression.  Harsha Madhyastha was involved
+from the earliest days of the TritonSort effort, and was present for the first
+successful sort. Radhika Niranjan Mysore put a lot of work into the initial
+Heaper-Merger version of the TritonSort architecture, and contributed
+significantly to MinuteSort. Alexander Pucher wrote the first iteration of our
+radix sort code, and helped me write what would become the final version of
+TritonSort in a single, crazed 48-hour push. Rishi Kapoor handled the mammoth
+port of CloudBurst to Themis with exceptional graciousness and tenacity. Terry
+Lam wrote Themis' PageRank implementation and input generators, and served as
+our first real user, helping to make Themis more robust.
 
 Chris Nyberg, Mehul Shah and Naga Govindaraju provided conscientious and
 patient shepherding of TritonSort through the sort benchmark validation
-process. Thanks for keeping us honest and giving us a target to hit.
+process. Thanks for keeping us honest and giving us a target to hit.  I regret
+having met Jim Gray, but the benchmark he pioneered has had a profound impact
+on this phase of my life.
 
-Chapter~\ref{chapter:tritonsort} contains material as it appears in the
-Proceedings of the USENIX Symposium on Networked Systems Design and
-Implementation (NSDI) 2011. Rasmussen, Alexander; Porter, George; Conley,
-Michael; Madhyastha, Harsha; Niranjan Mysore, Radhika; Pucher, Alexander;
-Vahdat, Amin. The dissertation author was the primary investigator and author
-of this paper.
+Joe Hellerstein gave me the exposure to computer science research that
+convinced me to go to graduate school, the recommendation letter that helped
+get me in, and the startup opportunity that got me out. Along the way, he
+provided feedback on papers and a great deal of valuable advice.
 
-Chapter~\ref{chapter:themis} contains material as it appears in the Proceedings
-of the ACM Symposium on Cloud Computing (SOCC) 2012. Rasmussen, Alexander;
-Porter, George; Vahdat, Amin. The dissertation author was the primary
-investigator and author of this paper.
+The work in this dissertation was funded by the National Science Foundation and
+generous donations from Cisco and NetApp. Special thanks to Landon Curt Noll
+for being our advocate inside Cisco for so many years.
 
-Chapter~\ref{chapter:fault_tolerance} contains material submitted for
-publication as ``I/O-Efficient Fault Tolerance for MapReduce''. Rasmussen,
-Alexander; Porter, George; Vahdat, Amin. The dissertation author was the
-primary investigator and author of this paper.
+I have been fortunate to make many new friends while at UCSD, and to keep in
+touch with friends from Berkeley, Monrovia High and before. Thank you for
+countless practice talks, draft reviews, shared meals and nights out. I am so
+incredibly fortunate to have all of you in my life.
+
+\input{tritonsort_ack}
+
+\input{themis_ack}
+
+\input{themis-ft_ack}
 
 \end{acknowledgements}
