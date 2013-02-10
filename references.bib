@@ -18,6 +18,12 @@
 @string{TOCS = "ACM Transactions on Computer Systems"}
 @string{PDIS = "International Conference on Parallel and Distributed Information Systems"}
 @string{TOMS = "ACM Transactions on Mathematical Software (TOMS)"}
+@string{FAST = "USENIX Conference on File and Storage Technologies (FAST)"}
+@string{TOS = "ACM Transactions on Storage (TOS)"}
+@string{TDSC = "IEEE Transactions on Dependable and Secure Computing"}
+@string{HotCloud = "USENIX Workshop on Hot Topics in Cloud Computing (HotCloud)"}
+@string{LADIS = "Large-Scale Distributed Systems and Middleware (LADIS)"}
+@string{NetDB = "International Workshop on Networking Meets Databases (NetDB)"}
 
 @inproceedings{tritonsort,
    author = "Alexander Rasmussen and George Porter and Michael Conley and Harsha V. Madhyastha and Radhika Niranjan Mysore and Alexander Pucher and Amin Vahdat",
@@ -588,4 +594,188 @@ howpublished = {\url{http://rulai.cshl.edu/rmap/}}
 title={lakewash\_combined\_v2.genes.nucleotide},
 author={Bill Howe},
 howpublished= {{\url{https://dada.cs.washington.edu/research/projects/db-data-L1_bu/escience_datasets/seq_alignment/}}}
+}
+
+@misc{jeff-dean-talk,
+author={Jeff Dean},
+title={{Software Engineering Advice from Building Large-Scale Distributed Systems}},
+howpublished="\url{http://research.google.com/people/jeff/stanford-295-talk.pdf}"
+}
+
+@inproceedings{nova,
+ author = {Olston, Christopher and Chiou, Greg and Chitnis, Laukik and Liu, Francis and Han, Yiping and Larsson, Mattias and Neumann, Andreas and Rao, Vellanki B.N. and Sankarasubramanian, Vijayanand and Seth, Siddharth and Tian, Chao and ZiCornell, Topher and Wang, Xiaodan},
+ title = {{Nova: Continuous Pig/Hadoop Workflows}},
+ booktitle = SIGMOD,
+year={2011}
+}
+
+@inproceedings{qptmd,
+author={Sunita Sarawagi},
+title={{Query Processing in Tertiary Memory Databases}},
+booktitle=VLDB,
+year={1995}
+}
+
+@inproceedings{coscan,
+ author = {Wang, Xiaodan and Olston, Christopher and Sarma, Anish Das and Burns, Randal},
+ title = {{CoScan: Cooperative Scan Sharing in the Cloud}},
+ booktitle = SoCC,
+year={2011}
+}
+
+@misc{ClouderaDellHadoopPlatform,
+key="cloudera",
+title={{Dell and Cloudera Hadoop Platform}},
+howpublished={http://www.cloudera.com/company/press-center/releases/\\dell-and-cloudera-collaborate-to-enable-large-scale-data-analysis-and-modeling-through-open-source/}
+}
+
+@inproceedings{google-availability:osdi10,
+ author = {Ford, Daniel and Labelle, Francois and Popovici, Florentina I. and Stokely, Murray and Truong, Van-Anh and Barroso, Luiz and Grimes, Carrie and Quinlan, Sean},
+ title = {Availability in globally distributed storage systems},
+ year = {2010},
+ booktitle = OSDI
+}
+
+@inproceedings{DBLP:conf/fast/PinheiroWB07,
+  author    = {Eduardo Pinheiro and
+               Wolf Weber and
+               Luiz Andre Barroso},
+  title     = {Failure Trends in a Large Disk Drive Population},
+  booktitle = FAST,
+  year = {2007}
+}
+
+@article{Schroeder:2007:UDF:1288783.1288785,
+ author = {Schroeder, Bianca and Gibson, Garth A.},
+ title = {Understanding disk failure rates: What does an MTTF of 1,000,000 hours mean to you?},
+ journal = TOS,
+ issue_date = {October 2007},
+ volume = {3},
+ number = {3},
+ month = oct,
+ year = {2007},
+}
+
+@inproceedings{DBLP:conf/nsdi/NathYGS06,
+  author    = {Suman Nath and
+               Haifeng Yu and
+               Phillip B. Gibbons and
+               Srinivasan Seshan},
+  title     = {Subtleties in Tolerating Correlated Failures in Wide-Area
+               Storage Systems},
+  booktitle = NSDI,
+  year = {2006}
+}
+
+@article{Schroeder:2010:LSF:1916484.1916652,
+ author = {Schroeder, Bianca and Gibson, Garth},
+ title = {A Large-Scale Study of Failures in High-Performance Computing Systems},
+ journal = TDSC,
+ volume = {7},
+ number = {4},
+ month = oct,
+ year = {2010},
+}
+
+@book{sysreliability,
+    author = "Eric Bauer and Xuemei Zhang and Douglas Kimber",
+    title = "Practical system reliability (pg. 226)",
+    publisher = "Wiley-IEEE Press",
+    year = 2009
+}
+
+@Misc{magda-ft,
+  author = {Magdalena Balazinska and Joeng-Hyon Hwang and Mehul A. Shah},
+  title = {{Fault Tolerance and High Availability in Data Stream Management Systems}},
+  howpublished = "\url{http://www.cs.washington.edu/homes/magda/encyclopedia-long.pdf}"
+}
+
+@inproceedings{dstreams,
+ author = {Zaharia, Matei and Das, Tathagata and Li, Haoyuan and Shenker, Scott and Stoica, Ion},
+ title = {{Discretized Streams: An Efficient and Fault-Tolerant Model for Stream Processing on Large Clusters}},
+ booktitle = HotCloud,
+year={2012}
+}
+
+@inproceedings{ramcloud-ft,
+ author = {Ongaro, Diego and Rumble, Stephen M. and Stutsman, Ryan and Ousterhout, John and Rosenblum, Mendel},
+ title = {{Fast Crash Recovery in RAMCloud}},
+ booktitle = SOSP,
+year={2011}
+}
+
+@book{gray-reuter,
+title={{Transaction Processing: Concepts and Techniques}},
+author = {Jim Gray and Andreas Reuter},
+publisher={{Morgan Kaufmann Publishers}},
+year={1993}
+}
+
+@inproceedings {Chen2012,
+ title = {{Interactive Analytical Processing in Big Data Systems: A Cross-Industry Study of MapReduce Workloads}},
+ author = {Yanpei Chen and Sara Alspaugh and Randy Katz},
+ booktitle = VLDB,
+ year = {2012}
+}
+
+@inproceedings{comet,
+ author = {He, Bingsheng and Yang, Mao and Guo, Zhenyu and Chen, Rishan and Su, Bing and Lin, Wei and Zhou, Lidong},
+ title = {{Comet: Batched Stream Processing for Data Intensive Distributed Computing}},
+ booktitle = SoCC,
+year={2010}
+}
+
+@inproceedings{query-opt-mapreduce,
+ author = {Wu, Sai and Li, Feng and Mehrotra, Sharad and Ooi, Beng Chin},
+ title = {{Query Optimization for Massively Parallel Data Processing}},
+ booktitle = SoCC,
+year={{2011}}
+}
+
+@article{endtoendargument,
+ author = {Saltzer, J. H. and Reed, D. P. and Clark, D. D.},
+ title = {{End-to-End Arguments in System Design}},
+ journal = TOCS,
+ volume = {2},
+ number = {4},
+ year = {1984}
+}
+
+@misc{redis,
+key={redis},
+title={{Redis}},
+howpublished = "\url{http://www.redis.io/}"
+}
+
+@inproceedings {hyperdex,
+ title = {{HyperDex: A Distributed, Searchable Key-Value Store}},
+ author = {Robert Escriva and Bernard Wong and Emin Gün Sirer},
+ booktitle = SIGCOMM,
+ year = {2012}
+}
+
+@inproceedings{cassandra,
+ author = {Lakshman, Avinash and Malik, Prashant},
+ title = {{Cassandra: A Decentralized Structured Storage System}},
+ booktitle = LADIS,
+ year = {2009}
+}
+
+@inproceedings {kafka,
+ title = {{Kafka: A Distributed Messaging System for Log Processing}},
+ author = {Jay Kreps and Neha Narkhede and Jun Rao},
+ booktitle = NetDB,
+ year = {2011}
+}
+
+@misc{kestrel,
+key={kestrel},
+title={{Kestrel}},
+howpublished = "\url{http://robey.github.com/kestrel/}"
+}
+
+@misc{hdfs,
+author={{Apache Software Foundation}},
+title={{HDFS Architecture Guide}},
+howpublished= "\url{http://hadoop.apache.org/docs/hdfs/current/hdfs_design.html}"
 }

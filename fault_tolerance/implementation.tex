@@ -1,0 +1,25 @@
+\section{Implementation}
+
+In this section, we describe the implementation of our fault tolerance
+strategies as an extension to \themis. Section~\ref{sec:themis} provides a
+brief overview of \themis' architecture, and Section~\ref{sec:recovery}
+describes the implementation of our write and read recovery strategies in the
+context of that architecture. In Section~\ref{sec:multi-tenancy}, we describe
+extensions to \themis to support multi-tenancy. Section~\ref{sec:control_plane}
+describes the way that jobs are dispatched.
+Section~\ref{sec:input_file_gathering} describes how files are assigned to
+nodes, and explores the practical concern of achieving high bandwidth from
+distributed storage. Section~\ref{sec:fault_response} describes how failures
+are detected and how nodes respond to failure during a job.
+
+\input{fault_tolerance/themis_overview}
+
+\input{fault_tolerance/recovery_impl}
+
+\input{fault_tolerance/multi_tenancy}
+
+\input{fault_tolerance/control_plane}
+
+\input{fault_tolerance/hdfs_proxy}
+
+\input{fault_tolerance/fault_response}

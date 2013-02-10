@@ -1,0 +1,87 @@
+\section{Design}
+\label{fault_tolerance:sec:design}
+
+In this section, we describe our goals in implementing fault tolerance for
+``dense'' MapReduce clusters. We then present an overview of the design of our
+fault tolerance approach, which incorporates aspects of several of the
+approaches described in Section~\ref{sec:fault_tolerance_approaches}.
+
+\subsection{Goals}
+
+Our goals when designing a fault tolerance scheme for ``dense'' MapReduce
+clusters are as follows. First, recovery should be proportional; that is, the
+amount of additional time taken to recover from a failure should be
+proportional to the failure's size. Second, the fault tolerance scheme should
+impose as little additional disk I/O in failure-free operation as possible, and
+perform as little additional disk I/O during recovery as possible. Finally, the
+system should be able to recover from failures of both a disk and an entire
+node.
+
+\subsection{Recovery in MapReduce}
+
+In this work, we assume that failures are fail-stop with complete loss of
+state. This means that if a disk fails, all data stored on that disk is lost.
+If a node fails, all its disks are considered to have failed. Failed disks and
+nodes must be explicitly recovered by an operator. Recovering from Byzantine
+faults is beyond the scope of this work.
+
+Fundamentally, recovering from a failure in MapReduce consists of two main
+tasks. Any intermediate data that was stored on failed disks must be
+recovered. We call this part of the recovery process \emph{write recovery},
+because it ensures that all intermediate records have been written. Also, the
+system must ensure that all input data was completely processed. If a node was
+in the middle of processing an input file when it failed, some of that file's
+records may not have been mapped and transmitted successfully. We call this
+part of the recovery process \emph{read recovery}, because it ensures that
+every input record has been read and mapped.
+
+\subsection{Write Recovery Approach}
+
+In order to perform write recovery, the system must regenerate all intermediate
+data that was supposed to have been stored on the failed disks. \themis uses a
+technique we call \emph{scan-and-discard} to perform this recovery. In the
+scan-and-discard approach, the input data set is re-read and each record is
+re-mapped, but only those records that would have been stored on the failed
+disks are transmitted to their destination.
+
+One obvious drawback of the scan-and-discard technique is that all input
+records must be re-read and re-mapped, even though most of those records will
+not be transmitted. \themis attempts to reduce or eliminate this additional I/O
+cost through scan sharing.
+
+There is a large body of prior work suggesting both a significant opportunity
+for and potential benefit from scan sharing in the MapReduce context. Recent
+traces from industrial MapReduce deployments~\cite{Chen2012} indicate that
+there are many opportunities for scan sharing in multi-tenant MapReduce
+clusters. In these traces, input file access frequency is roughly Zipfian,
+meaning that most input file accesses are for a small number of ``hot''
+files. In addition, input file access exhibits a large amount of temporal
+locality. In the traces analyzed in \cite{Chen2012}, between 60 and 90\% of
+input file re-accesses happen within one hour of the original access. In one
+particular workload (a Cloudera customer running a cluster of 100 machines),
+70\% of input re-accesses occurred within one minute of the original access.
+Agrawal, Kifer and Olson~\cite{ako08} observe that there are often many
+concurrent jobs that access a shared set of data files. The authors of
+Comet~\cite{comet} achieved a 50\% reduction in total I/O in their DryadLINQ
+cluster using scan sharing. Scan sharing has also been shown to provide a
+significant improvement in job throughput for Pig and Hive
+workloads~\cite{nova, coscan, query-opt-mapreduce}.
+
+\subsection{Read Recovery Approach}
+
+Our approach to read recovery is similar to that for write recovery; we re-read
+any input files that may not have been completely processed and re-map each
+record. In contrast to our write recovery approach, only records that the
+failed node would have sent to the remaining live nodes are transmitted to
+their destinations.
+
+Once the read recovery process has completed, each intermediate record is
+guaranteed to be present on the cluster's intermediate disks at least once.  To
+maintain correctness, however, the \reduce function must not reduce multiple
+duplicate copies of the same record, since this would likely change the result
+of the job. Maintaining exactly one copy of each intermediate record is
+challenging and potentially quite heavyweight, since it involves tracking
+whether each intermediate record was successfully transmitted by the failed
+node prior to the failure. We avoid this complication by allowing duplicates
+and filtering them out on demand in a manner that is transparent to the \reduce
+function.

@@ -1,0 +1,24 @@
+\subsection{Responding to Failures}
+\label{sec:fault_response}
+
+As node coordinators run, they refresh a keep-alive key in Redis every few
+seconds; if a node fails to refresh its keep-alive key, the cluster coordinator
+presumes that the node has failed. A node notifies the cluster coordinator
+directly if it finds that it can no longer write to one of its intermediate
+disks.
+
+\themis attempts to insulate the rest of the cluster from a failure whenever
+one occurs so that the healthy portion of the cluster can complete as much work
+as possible. To avoid the attendant complexity and fragility of coordinating
+failure notification across nodes, \themis simply discards any data meant for a
+failed portion of the cluster. When a node fails, all existing TCP sockets to
+that node will break. Nodes respond to broken sockets by discarding all data
+meant for that socket for the remainder of the batch. Similarly, when a disk
+fails, all data that would have been written to the failed disk for the rest of
+the batch is discarded. Subsequent batches will not use failed disks or nodes
+until an operator has explicitly marked them as having recovered.
+
+Currently, the user is responsible for issuing a recovery job to recover a
+failed job. Scheduling recovery jobs to maximize the likelihood of scan sharing
+is beyond the scope of this work; we examine some related efforts relevant to
+this problem in Chapter~\ref{chapter:related_work}.

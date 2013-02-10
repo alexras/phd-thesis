@@ -1,0 +1,68 @@
+\section{Introduction}
+
+A key requirement and challenge in building scale-out data processing
+architectures is allowing them to recover from failures without burdening the
+programmer. MapReduce traditionally provides fault tolerance by splitting the
+execution of the \map and \reduce functions into a collection of idempotent
+\emph{tasks}. Each map task operates over a portion of the input, while each
+reduce task operates over records produced by the \map function with a
+particular set of keys. When a task fails, it is simply re-executed. We refer
+to this method of fault tolerance as ~\emph{task-level fault tolerance}.
+
+A key benefit of this fault tolerance technique is that it is
+\emph{proportional}. Generally speaking, this means that the amount of
+additional work required to recover from a failure is proportional to the size
+of that failure. Proportional fault tolerance techniques work extremely well on
+clusters containing thousands of nodes, because failures in those environments
+are extremely common and the relative size of each individual failure is
+small~\cite{jeff-dean-talk}.
+
+In MapReduce's case, however, proportional fault tolerance comes with a
+significant cost; map tasks must materialize their output to their local disks
+before transferring that output to reduce tasks. These materializations are
+required because, in general, each reduce task needs some of the records
+produced by every map task in order to run. Were map tasks to send their
+outputs to reduce tasks directly, the loss of the node on which a reduce
+task runs would require that map tasks re-compute all data sent to that
+task. In I/O-bound applications, the extra materializations required by
+task-level fault tolerance can negatively
+affect performance.
+
+Many modern MapReduce clusters are ``dense'', in the sense that they pack a
+large amount of storage, compute, and network bandwidth into a small number of
+racks of servers. In this chapter, we show that in these ``dense'' clusters,
+the additional I/O necessitated by task-level fault tolerance often leads to
+lower overall job throughput than simply re-running a job if a failure
+occurs.
+
+The more optimistic \emph{job-level fault tolerance} employed by \themis in the
+previous chapter allows \themis to perform much more aggressive operator
+pipelining than task-level fault tolerance can achieve while still maintaining
+the 2-IO property. However, job-level fault tolerance precludes running jobs
+that take longer than the cluster MTTF to complete, preventing large clusters
+(or unusually failure-prone small ones) from running some jobs.  To mitigate
+this problem, we present a fault tolerance approach that provides proportional
+recovery without imposing additional intermediate data materialization during
+failure-free execution. Our main goal in designing this fault tolerance scheme
+is to perform as little additional I/O as possible both in common case
+operation and during recovery from failure.
+
+Our contributions are as follows:
+
+\begin{enumerate}
+  \item We explore the tradeoffs of different levels of fault tolerance in
+    ``dense'' clusters.
+  \item We modify \themis to allow it to run multiple jobs concurrently, using
+    scan sharing~\cite{nova, qptmd, coscan} to reduce the amount of I/O
+    required for each job.
+  \item Leveraging this multi-tenant capability, we present a fault tolerance
+    mechanism that composes previously known techniques to reduce the amount of
+    additional I/O needed for recovery at the expense of additional redundant
+    computation.
+  \item We show how this fault tolerance mechanism can be used to provide
+    proportional recovery both from failures of a single disk and an entire
+    node. When scan sharing, an eight-node \themis cluster can recover from a
+    disk failure with under 5\% overhead.
+  \item We compare this approach to approaches based on record-based provenance
+    information.
+\end{enumerate}

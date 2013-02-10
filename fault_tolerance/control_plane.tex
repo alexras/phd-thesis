@@ -1,0 +1,24 @@
+\subsection{Job Dispatch}
+\label{sec:control_plane}
+
+The execution of batches of jobs is controlled by a \emph{cluster
+  coordinator}. The cluster coordinator accepts descriptions of batches from
+clients and coordinates their execution across the cluster's machines. Each
+machine in the cluster runs a \emph{node coordinator} that is responsible for
+running a \themis process on its machine and reporting an error if it crashes.
+
+Messages are exchanged between the user, the cluster coordinator and the node
+coordinators through the manipulation of message queues. Additionally, the
+coordinators maintain metadata about both themselves and the jobs they run. In
+our current implementation, the role of message queues and metadata store are
+both filled by a Redis~\cite{redis} database. Redis was chosen primarily for
+convenience; a scalable key-value store like Hyperdex~\cite{hyperdex} or
+Cassandra~\cite{cassandra} and message queue like Kafka~\cite{kafka} or
+Kestrel~\cite{kestrel} could be substituted.
+
+To run a batch, the user pushes a description of the jobs in the batch to the
+cluster coordinator's job queue. Upon dequeueing a batch, the cluster
+coordinator assigns a unique job ID to each job in the batch. It then determines
+the set of input files that each job will process, and divvies those files out
+among nodes. We describe this process in more detail in
+Section~\ref{sec:input_file_gathering}.

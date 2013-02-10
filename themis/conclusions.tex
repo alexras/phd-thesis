@@ -1,0 +1,22 @@
+\section{Conclusions}
+\label{themis:sec:conclusions}
+
+Many MapReduce jobs are I/O-bound, and so minimizing the number of I/O
+operations is critical to improving their performance.  In this work, we
+present Themis, a MapReduce implementation that meets the 2-IO property,
+meaning that it issues the minimum number of I/O operations for jobs large
+enough to exceed memory.  To avoid materializing intermediate results, Themis
+foregoes task-level fault tolerance, relying instead on job-level fault
+tolerance. Since the 2-IO property prohibits it from spilling records to disk,
+Themis must manage memory dynamically and adaptively. To ensure that writes to
+disk are large, Themis adopts a centralized, per-node disk scheduler that
+batches records produced by different \mappers.
+
+There exist a large and growing number of clusters that can process
+petabyte-scale jobs, yet are small enough to experience a qualitatively lower
+failure rate than warehouse-scale clusters.  We argue that these deployments
+are ideal candidates to adopt more efficient implementations of MapReduce,
+which result in higher overall performance than more pessimistic
+implementations.  Themis has been able to implement a wide
+variety of MapReduce jobs at nearly the sequential speed of the underlying
+storage layer, and is on par with TritonSort's record sorting performance.

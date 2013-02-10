@@ -1,2 +1,27 @@
+\def\themis{Themis\xspace}
+
 \chapter{I/O-Efficient Fault Tolerance}
 \label{chapter:fault_tolerance}
+
+A key requirement when building scale-out data processing architectures is
+allowing them to recover from failures in a manner that is transparent to the
+end user. Traditional MapReduce implementations provide fault tolerance by
+materializing intermediate data to disk on both sides of a network
+transfer. This increases the amount of disk I/O that each MapReduce job must
+perform, which fundamentally limits the performance of I/O-bound workloads.
+
+In this chapter, we argue that small and medium clusters -- on which MapReduce
+is commonly deployed, and where the likelihood of a failure during a job is low
+relative to large-scale clusters -- can benefit from more optimistic forms of
+fault tolerance for which the common-case overhead is far lower than
+traditional approaches. In particular, we explore the implications of the
+job-level fault tolerance approach adopted by Themis in the previous chapter,
+and describe an alternative fault tolerance method for Themis that leverages
+prior work in scan sharing and eager record-level provenance.
+
+
+\input{fault_tolerance/intro}
+\input{fault_tolerance/motivation}
+\input{fault_tolerance/alternative_schemes}
+\input{fault_tolerance/design}
+\input{fault_tolerance/implementation}
