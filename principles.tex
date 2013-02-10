@@ -55,6 +55,7 @@ the dataset fits in memory; we explore these implications briefly in
 Chapter~\ref{chapter:tritonsort}.
 
 \section{Hardware Architecture}
+\label{sec:hardware_architecture}
 
 To determine the right hardware configuration for our application, we make the
 following observations about our workloads. Since the ``working set'' for our
@@ -150,6 +151,15 @@ were upgraded.  One of the key takeaways from our work is the important role
 that buffering plays in enabling high utilization of the network, disk, and
 CPU, and the efficient, dynamic management of that buffering is a key
 contribution of this work.
+
+The cluster we used for the research described in this dissertation consists of
+52 HP DL380G6 servers, each with two Intel E5520 CPUs (2.27 GHz), 24 GB of
+memory, and 16 500GB 7,200 RPM 2.5" SATA drives. Each hard drive is configured
+with a single XFS partition. Each server has two HP P410 drive controllers with
+512MB on-board cache, as well as a Myricom 10 Gbps network interface. The
+network interconnect we used to evaluate TritonSort is a 52-port Cisco Nexus
+5020 datacenter switch. During the development of Themis, we upgraded the
+switch to a Cisco Nexus 5596.
 
 \section{Software Architecture}
 

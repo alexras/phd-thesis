@@ -1,2 +1,24 @@
 \chapter{Themis: I/O-Efficient MapReduce}
 \label{chapter:themis}
+
+This chapter presents Themis\footnote{Themis is a Titan in Greek mythology who
+  is tasked with creating balance, order and harmony.}, an I/O-efficient
+MapReduce system derived from TritonSort.
+
+Many MapReduce jobs are I/O-bound, and so minimizing the number of I/O
+operations is critical to improving their performance. Themis reads and writes
+data records to disk exactly twice, which is the minimum amount possible for
+data sets that cannot fit in memory.
+
+In order to minimize I/O, Themis makes fundamentally different design decisions
+from previous MapReduce implementations. Themis performs a wide variety of
+MapReduce jobs -- including click log analysis, DNA read sequence alignment,
+and PageRank -- at nearly the speed of TritonSort's record-setting sort
+performance.
+
+\input{themis/intro}
+\input{themis/challenges}
+\input{themis/design}
+\input{themis/memory}
+\input{themis/phase_zero}
+\input{themis/eval}

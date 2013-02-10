@@ -1,0 +1,45 @@
+\section{The Challenge of Skew}
+\label{themis:sec:challenges}
+
+One of MapReduce's attractive properties is its ability to handle
+semi-structured and variably-sized data.  This variability makes maintaining
+the 2-IO property a challenge.  In this section, we describe two sources of
+variability and the resulting requirements they place on our design.
+
+An input dataset can exhibit several different kinds of \emph{skew},
+which simply refers to variability in its structure and content.  These
+include:
+
+\paragraph{Record Size Skew:} In systems with semi-structured or unstructured
+data, some records may be much larger than others.  This is called \emph{record
+  size skew}.  In extreme cases, a single record may be gigabytes in size.
+
+\paragraph{Partitioning Skew:} Data that is
+not uniformly distributed across its keyspace exhibits \emph{partitioning
+  skew}.  This can cause some nodes to process much more data than others if
+the data is na\"{\i}vely partitioned across nodes, creating
+stragglers~\cite{DeWittGraySkew}.  Handling skew in MapReduce is complicated by
+the fact that the distribution of keys in the data produced by a \map function
+is often not known in advance.  Existing MapReduce implementations handle
+partitioning skew by spilling records to disk that cannot fit into memory.
+
+\paragraph{Computational Skew:} In a dataset exhibiting
+\emph{computational skew}, some records take much longer than average to
+process.  Much of the work on mitigating computational skew in MapReduce
+involves exploiting the nature of the particular problem and relying on a
+degree of user guidance~\cite{SkewReduce} or proactively re-partitioning
+the input data for a task~\cite{SkewTune}.  As the focus of our work is
+I/O-bound jobs, we do not consider computational skew in this work.
+
+\paragraph{Performance Heterogeneity:} The performance of a
+population of identical machines can vary significantly; the reasons for this
+heterogeneity are explored in \cite{stutterfault}. In addition, clusters are
+rarely made up of a homogeneous collection of machines, due both to machine
+failures and planned incremental upgrades. While we believe that the techniques
+presented in this work can be applied to heterogeneous clusters, we have not
+evaluated Themis in such a setting.
+
+To handle record skew, Themis dynamically controls its memory usage, which we
+describe in Section~\ref{sec:memory}.  Themis adopts a sampling-based skew
+mitigation technique to minimize the effects of partitioning skew.  We discuss
+this mitigation technique in Section~\ref{sec:phase_zero}.

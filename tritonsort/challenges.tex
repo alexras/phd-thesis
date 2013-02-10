@@ -1,5 +1,5 @@
 \section{Design Challenges}
-\label{sec:challenges}
+\label{tritonsort:sec:challenges}
 
 In this paper, we focus on designing systems that sort large datasets as an
 instance of the larger problem of building balanced systems.  Here, we discuss
@@ -21,11 +21,9 @@ output file.
 
 \begin{figure}
  \centering
- \includegraphics[width=\textwidth]{tritonsort/graphs/mergesortbench.pdf}
-
- \caption{Performance of a Heaper-Merger sort
+ \includegraphics[width=\columnwidth]{tritonsort/graphs/mergesortbench.pdf}
+ \caption{\label{fig:mergesort}Performance of the Heaper-Merger sort
    implementation in microbenchmark on a 200GB per disk parallel external merge-sort as a function of the number of files merged per disk.}
- \label{fig:mergesort}
 \end{figure}
 
 The problem with the Heaper-Merger architecture is that it does not scale well.

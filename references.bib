@@ -14,7 +14,10 @@
 @string{SIGOPSOSR = "SIGOPS Operating Systems Review"}
 @string{VLDBEndowment = "Proceedings of the VLDB Endowment"}
 @string{SIGCOMM = "ACM Special Interest Group on Data Communication (SIGCOMM)"}
-
+@string{HotOS = "USENIX Workshop on Hot Topics in Operating Systems (HotOS)"}
+@string{TOCS = "ACM Transactions on Computer Systems"}
+@string{PDIS = "International Conference on Parallel and Distributed Information Systems"}
+@string{TOMS = "ACM Transactions on Mathematical Software (TOMS)"}
 
 @inproceedings{tritonsort,
    author = "Alexander Rasmussen and George Porter and Michael Conley and Harsha V. Madhyastha and Radhika Niranjan Mysore and Alexander Pucher and Amin Vahdat",
@@ -502,4 +505,87 @@ booktitle=SoCC,
   title =        {{Data Center TCP (DCTCP)}},
   booktitle =    SIGCOMM,
   year =         2010,
+}
+
+@misc{HadoopPoweredBy,
+author = {{Hadoop PoweredBy Index}},
+howpublished = {\url{http://wiki.apache.org/hadoop/PoweredBy}}
+}
+
+@misc{MonashTrajman,
+title = {{Petabyte-Scale Hadoop Clusters (Dozens of Them)}},
+author = {Curt Monash},
+howpublished = {\url{http://www.dbms2.com/2011/07/06/petabyte-hadoop-clusters/}}
+}
+
+@INPROCEEDINGS{stutterfault,
+    author = {{Remzi H. Arpaci-Dusseau and Andrea C. Arpaci-Dusseau}},
+    title = {{Fail-Stutter Fault Tolerance}},
+    booktitle = HotOS,
+    year = {2001}
+}
+
+@article{ReceiveLiveLock,
+ author = {Mogul, Jeffrey C. and Ramakrishnan, K. K.},
+ title = {{Eliminating Receive Livelock in an Interrupt-Driven Kernel}},
+ journal = TOCS,
+ volume = {15},
+ number = {3},
+ month = aug,
+ year = {1997},
+}
+
+@article{NajjarLeeGao,
+title = {{Advances in the Dataflow Computational Model}},
+journal = "Parallel Computing",
+volume = "25",
+number = "13",
+pages = "1907 - 1929",
+year = "1999",
+author = "Walid A Najjar and Edward A Lee and Guang R Gao",
+}
+
+@inproceedings{ProbabilisticSplitting,
+author = {DeWitt, D.J. and Naughton, J.F. and Schneider, D.a.},
+booktitle = PDIS,
+title = {{Parallel Sorting on a Shared-Nothing Architecture Using Probabilistic Splitting}},
+year = {1991}
+}
+
+@article{Vitter:1985:RSR:3147.3165,
+ author = {Vitter, Jeffrey S.},
+ title = {{Random Sampling with a Reservoir}},
+ journal = TOMS,
+ volume = {11},
+ number = {1},
+ month = mar,
+ year = {1985},
+}
+
+@misc{wex,
+title = {{Freebase Wikipedia Extraction (WEX)}},
+key = {wex},
+howpublished = {\url{http://wiki.freebase.com/wiki/WEX}}
+}
+
+@article{cloudburst-bio,
+ author = {{Michael C Schatz}},
+ title = {{CloudBurst: {H}ighly Sensitive Read Mapping with MapReduce}},
+ journal = {{Bioinformatics}},
+ year = {2009},
+ volume = 25,
+ number = 11,
+ pages = {1363-9}
+}
+
+@misc{rmap,
+title = {{The {RMAP} Software for Short-Read Mapping}},
+author = {Andrew D Smith and Wen Chung},
+howpublished = {\url{http://rulai.cshl.edu/rmap/}}
+}
+
+@misc{cloudburst_uw_data,
+title={lakewash\_combined\_v2.genes.nucleotide},
+author={Bill Howe},
+howpublished= {{\url{https://dada.cs.washington.edu/research/projects/db-data-L1_bu/escience_datasets/seq_alignment/}}}
 }

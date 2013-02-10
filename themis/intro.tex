@@ -1,0 +1,67 @@
+\section{Introduction}
+\label{themis:sec:intro}
+
+Our experience building TritonSort shows that an appropriately balanced
+implementation can realize orders of magnitude improvement in throughput and
+efficiency.  Translating these types of gains to more general-purpose data
+processing systems will help close the efficiency gap present in modern
+large-scale data processing systems, allowing more work to be performed with
+the same hardware, or the same amount of work to be performed with less
+hardware. This improved efficiency will result in substantially lowered system
+cost, energy usage, and management complexity.
+
+Given that many MapReduce jobs are I/O-bound, an efficient MapReduce system
+must aim to minimize the number of I/O operations it performs.  Fundamentally,
+every MapReduce system must perform at least two I/O operations per record when
+the amount of data exceeds the amount of memory in the cluster~\cite{sort-io}.
+We refer to a system that meets this lower-bound as having the ``2-IO''
+property.  Any data processing system that does not have this property is doing
+more I/O than it needs to.  Existing MapReduce systems incur additional I/O
+operations in exchange for simpler and more fine-grained fault tolerance.
+
+Themis is an implementation of MapReduce designed to have the 2-IO
+property. Themis accommodates the flexibility of the MapReduce programming
+model while simultaneously delivering high efficiency.  It does this by
+considering fundamentally different points in the design space than existing
+MapReduce implementations:
+
+\paragraph{1. Eliminating task-level fault tolerance:} At the scale of tens of
+thousands of servers, failures are common, and so MapReduce was designed with a
+strong task-level fault tolerance model.  However, more aggressive fault
+tolerance gains finer-grained restart at the expense of lower overall
+performance.  Interestingly, many Hadoop users report cluster sizes of under
+100 nodes~\cite{HadoopPoweredBy}, much smaller than those deployed by
+MapReduce's early adopters.  In 2011, Cloudera's VP of Technology Solutions
+stated that the mean size of their clients' Hadoop clusters is 200 nodes, with
+the median size closer to 30~\cite{MonashTrajman}.  At this moderate scale,
+failures are much less common, and aggressive fault tolerance is wasteful in
+the common case.  Foregoing task-level fault tolerance permits a design that
+achieves the 2-IO property.  When a job experiences a failure, Themis simply
+re-executes it.  This optimistic approach to fault tolerance enables Themis to
+aggressively pipeline record processing without unnecessarily materializing
+intermediate results to disk.  As we will show in
+Chapter~\ref{chapter:fault_tolerance}, for moderate cluster sizes this approach
+has the counter-intuitive effect of improving performance despite the
+occasional job re-execution.
+
+\paragraph{2. Dynamic, adaptive memory allocation:} To maintain the 2-IO
+property, Themis must process a record completely once it is read from disk.
+This prevents Themis from putting records back on disk in response to memory
+pressure through swapping or writing spill files.  Themis implements a
+policy-based, application-level memory manager that provides fine-grained
+sharing of memory between operators processing semi-structured, variably-sized
+records.  This allows it to support datasets with as much as a factor of
+$10^7$ skew between record sizes while maintaining the 2-IO property.
+
+\paragraph{3. Central management of shuffle and disk I/O:} Themis uses a
+centralized, per-node disk scheduler that ensures that records from multiple
+sources are written to disk in large batches to reduce disk seeks.  Themis
+delivers nearly sequential disk I/O across a variety of MapReduce jobs, even
+for workloads that far exceed the size of main memory.
+
+To validate our design, we have written a number of MapReduce programs on
+Themis, including a web user session tracking application, PageRank, n-gram
+counting, and a DNA read sequence alignment application.  We found that Themis
+processes these jobs at nearly the per-node performance of TritonSort's
+record-setting sort run and nearly the maximum sequential speed of the
+underlying disks.
