@@ -1,0 +1,9 @@
+\section{Conclusions}
+
+MapReduce's traditional approach to fault tolerance is proportional, but it
+imposes the overhead of additional rounds of I/O in common-case operation,
+which negatively impacts the system's overall performance. In this work, we
+have shown that, through leveraging the multi-tenancy typical of a MapReduce
+cluster and composing previously-known fault tolerance techniques, it is
+possible to provide proportional fault tolerance without imposing additional
+rounds of I/O in failure-free operation.

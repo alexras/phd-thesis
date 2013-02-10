@@ -17,7 +17,7 @@ TritonSort.  Like TritonSort, Themis is written as a sequence of
 \begin{figure*}
 \centering
 \includegraphics[width=\textwidth]{themis/figures/detailed_phase_one.pdf}
-\caption{\label{fig:phase_one} Stages of Phase One (Map/Shuffle) in Themis}
+\caption{\label{themis:fig:phase_one} Stages of Phase One (Map/Shuffle) in Themis}
 \end{figure*}
 
 Unlike existing MapReduce systems, which executes \map and \reduce tasks
@@ -56,7 +56,7 @@ output partition exactly once.  Thus, Themis has the 2-IO property.
 Phase one is responsible for implementing both the \map operation as well as
 shuffling records to their appropriate intermediate partition.  Each node in
 parallel implements the stage graph pipeline shown in
-Figure~\ref{fig:phase_one}.
+Figure~\ref{themis:fig:phase_one}.
 
 The \Readerbf stage reads records from an input disk and sends them to the
 \Mapperbf stage, which applies the \map function to each record.  As the \map
@@ -103,7 +103,7 @@ implementation.
 \begin{figure}[h]
 \centering
 \includegraphics[width=\columnwidth]{themis/figures/phase_two.pdf}
-\caption{\label{fig:phase_two} Stages of Phase Two (Sort/Reduce) in Themis}
+\caption{\label{themis:fig:phase_two} Stages of Phase Two (Sort/Reduce) in Themis}
 \end{figure}
 
 By the end of phase one, the map function has been applied to each input
@@ -111,7 +111,7 @@ record, and the records have been grouped into partitions and stored on the
 appropriate node so that all records with the same key are stored in a single
 partition.  In phase two, each partition must be sorted by key, and the \reduce
 function must be applied to groups of records with the same key.  The stages
-that implement phase two are shown in Figure~\ref{fig:phase_two}.
+that implement phase two are shown in Figure~\ref{themis:fig:phase_two}.
 
 There is no network communication in phase two, so nodes process their
 partitions independently.  Entire partitions are read into memory at once by

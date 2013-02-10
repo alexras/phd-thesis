@@ -1,25 +1,13 @@
 \subsection{Themis: I/O-Efficient MapReduce}
 \label{sec:themis}
 
-In this section, we present a brief overview of \themis, our highly
+In this section, we present a brief recap of the design of \themis, our highly
 I/O-efficient MapReduce system. A more detailed description and evaluation of
-\themis is presented in ~\cite{themis}.  We opted to implement our fault
-tolerance scheme in \themis rather than Hadoop because \themis lacked a
-proportional fault tolerance mechanism prior to this work, whereas the
+\themis is presented in Chapter~\ref{chapter:themis}.  We opted to implement
+our fault tolerance scheme in \themis rather than Hadoop because \themis lacked
+a proportional fault tolerance mechanism prior to this work, whereas the
 task-level fault tolerance scheme used by Hadoop is a tightly-integrated part
 of its design.
-
- \themis is designed to minimize the amount of disk I/O it
- performs. Particularly, \themis tries to maintain what we call the \emph{2-IO
-   property} during failure-free operation; that is, it reads and writes each
- record it processes exactly twice. In I/O-bound workloads, the performance of
- a system is limited by the speed at which it can write to secondary storage
- and the number of times it writes to that storage. Aggarwal and
- Vitter~\cite{sort-io} show that two reads and two writes per record is a lower
- bound for large-scale distributed sorting, and since a distributed sort by key
- forms the kernel of MapReduce computations, this bound applies to MapReduce as
- well. Hence, by achieving the 2-IO property, \themis minimizes the amount of
- disk I/O it performs.
 
 \begin{figure}
   \centering

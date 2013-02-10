@@ -1,13 +1,14 @@
 \subsection{Recovery Mechanism}
 \label{sec:recovery}
 
-As described in Section~\ref{sec:design}, recovering from a failure consists of
-two central actions: write recovery and read recovery. In the case of \themis,
-write recovery involves recovering partitions on any intermediate disk that
-failed, while read recovery involves re-generating missing pieces of partitions
-that a failed node should have produced, but didn't. When a job fails, \themis
-will recover it by running a \emph{recovery job}, which is treated like a
-normal MapReduce job but is dedicated to recovery.
+As described in Section~\ref{fault_tolerance:sec:design}, recovering from a
+failure consists of two central actions: write recovery and read recovery. In
+the case of \themis, write recovery involves recovering partitions on any
+intermediate disk that failed, while read recovery involves re-generating
+missing pieces of partitions that a failed node should have produced, but
+didn't. When a job fails, \themis will recover it by running a \emph{recovery
+  job}, which is treated like a normal MapReduce job but is dedicated to
+recovery.
 
 \begin{figure}
   \centering
