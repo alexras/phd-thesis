@@ -1,0 +1,29 @@
+\section{MinuteSort: An In-Memory Sort Implementation}
+\label{sec:minutesort}
+
+For the MinuteSort benchmark, we modified our architecture as follows. In the
+first phase, as before, we read the input data and distribute records across
+machines based on the logical disk to which the record maps. However, logical
+disks are maintained in memory instead of being written to disk immediately.
+In phase two (once all input records have been transferred to their appropriate
+logical disks), the in-memory logical disks are directly passed to workers that
+sort them. These sorters pass sorted logical disks to writers to be written to
+disk. Hence, logical disks are still written to disk, but are not written until
+after they have been sorted. This enabled us to make use of 16 \writer stages,
+since we can separate reads and writes to disk temporally (verses separating
+those operations by partitioning the disks into input and intermediate disks in
+the case of out-of-memory sorting described previously).  The goal of
+MinuteSort is to sort as much data as possible in under one minute, and thus
+the evaluation metric is ``GB sorted.''
+
+We ran TritonSort in its MinuteSort configuration on 66 nodes with 20.5 GB of
+data per node, for a total of 1353 GB of data. We performed 15 consecutive
+trials.  For these trials, TritonSort's median elapsed time was 59.2 seconds,
+with a maximum time of 61.7 seconds, a minimum time of 57.7 seconds, and an
+average time of 59.2 seconds. All times were rounded to the nearest tenth of a
+second.  Only 3 of the 15 consecutive trials had completion times longer than
+60 seconds.  Although MinuteSort and JouleSort (described in the following
+section) test against a different number of nodes than the other forms of
+sorting we evaluate, their results can be qualitatively compared, given that
+the scalabilty we have observed is nearly linear across the range of nodes
+against which we test.

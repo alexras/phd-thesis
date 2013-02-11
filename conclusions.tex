@@ -1,2 +1,111 @@
 \chapter{Conclusions and Future Directions}
 \label{chapter:conclusions}
+
+Existing large-scale data processing systems scale out quite well, but do not
+scale up; put another way, they do not utilize their clusters' resources to
+nearly the extent that they should. In this dissertation, we have presented
+two systems that illustrate the substantial gain in per-node efficiency that
+can be realized if a minimal amount of efficiently-performed I/O is considered
+as a first-class architectural concern.
+
+In this chapter, we summarize the systems presented in this dissertation, and
+discuss Themis's present limitations and some possible future research
+directions.
+
+\section{Summary}
+
+With TritonSort, we have shown that a particular representative problem in this
+space, large-scale sorting, can be performed at close to the maximum throughput
+of the cluster through careful management of system resources to ensure
+cross-resource balance. TritonSort's architecture is based on two central,
+intuitive principles:
+
+\begin{itemize}
+  \item \textbf{When possible, write in large, sequential chunks.} The
+    reasoning behind this principle applies mainly to magnetic hard drives, due
+    to these devices' physical characteristics. TritonSort's user-level, global
+    disk management subsystem performs fine-grained, dynamic buffering in front
+    of a node's disks to ensure that writes are large and sequential even when
+    the performance of a given disk is variable.
+  \item \textbf{Read and write as little as possible.} Since secondary storage
+    is likely to remain the bottleneck for large-scale data processing well
+    into the future, it is critical that data processing systems read and write
+    to secondary storage as little as possible. TritonSort's two phase external
+    sort pipelines records aggressively; it reads and writes each record
+    exactly twice, the theoretical lower bound for external sorting.
+\end{itemize}
+
+With Themis, we showed that TritonSort's two central principles could be
+applied to a wider class of data-intensive problems. However, in order to
+achieve similar performance benefits for general-purpose problems, we had to
+significantly overhaul the way that we managed memory and partition
+intermediate data adaptively. The resulting sampling and user-level memory
+management systems allow for fine-grained, policy-driven control of memory
+access in a way that allows jobs running in Themis to make progress in the face
+of significant amounts of skew without creating stragglers. Themis executes a
+wide range of MapReduce jobs with significantly higher per-node efficiency than
+existing systems.
+
+The aggressive pipelining adopted by both TritonSort and Themis comes at a
+cost; the loss of any intermediate data requires that it be recomputed, since
+it was only materialized in one place. We have shown that, in many scenarios,
+the penalty imposed by complete re-computation on failure is significantly less
+than the performance penalty of intermediate materialization. Further, we have
+presented a modification to Themis that allows for proportional recovery from
+faults. The central principle of this recovery mechanism is that by taking
+advantage of the nature of multi-tenancy in modern MapReduce clusters and
+relaxing the assumption that each intermediate record is created exactly once,
+one can dramatically decrease the overhead of job re-execution.
+
+We believe that this work holds a number of lessons for efficient
+data-intensive system design and scale-out architectures in general, and will
+help inform the construction of more efficient systems that will bridge the gap
+between scalability and per-node efficiency.
+
+\section{Limitations and Future Work}
+
+Themis's high level of performance is predicated on its ability to tightly
+control access to its host machine's I/O and memory. As a consequence, it is
+unclear how Themis would perform when sharing a cluster of machines with other
+applications. It is possible that some of Themis's features (such as its
+unified control over disk I/O) might be incorporated into a lower-level service
+that all processes could share, but we have not explored this approach.
+
+At present, phase one of Themis's execution is limited by the speed of the
+slowest node, and is thus negatively affected by stragglers. Since Themis does
+not split its jobs into tasks, it is harder for it to support traditional
+methods of straggler mitigation such as speculative execution. Investigating
+alternate means of straggler mitigation is the subject of ongoing work.
+
+A potential concern with the ``scan-and-discard'' method of fault tolerance
+that we have not addressed in this work is the CPU overhead involved in
+needlessly mapping input records whose intermediate data is not being
+recovered. Modifying our approach to account for this overhead is the subject
+of future work.
+
+One clear avenue of future study is augmenting replicated storage systems like
+HDFS so that they achieve performance close to that of raw disk. Our primary
+whole-file replication approach, while fairly effective when the primary
+replica is available, is admittedly fragile, and more adaptive or
+workload-aware solutions could provide performance much closer to that of raw
+disks.
+
+Currently, the number of workers in each stage is fixed. To make the system
+easier to configure, it would be valuable to dynamically determine the number
+of workers that a stage needs to not bottleneck previous stages. A stage's
+performance on synthetic data in isolation provides a reasonable upper-bound on
+its performance, but any synthetic analysis does not take runtime conditions
+such as CPU scheduling and cache contention into account. Therefore, some
+manner of online learning algorithm will be necessary to determine a good
+configuration at runtime.
+
+Solid-state drives, or SSDs, are rapidly decreasing in cost per gigabyte but
+have not approached the low price provided by magnetic hard
+drives. Nevertheless, it is worth exploring the applicability of our design
+principles to solid-state storage like SSDs and PCI-attached flash.
+
+It is also worth exploring the applicability of our user-level memory
+and disk management subsystems in a more general-purpose setting. For example,
+languages like Pig and Hive that currently compile to a sequence of MapReduce
+jobs could be compiled into a single distributed dataflow graph and thus forego
+a great deal of often unnecessary intermediate data materialization.
