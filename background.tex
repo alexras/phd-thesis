@@ -8,10 +8,12 @@ common.
 \section{Problem Formulation: Sorting}
 
 TritonSort seeks to meet the specifications laid out in the GraySort
-benchmark~\cite{terasort}. For this benchmark, records to be sorted consist of
+benchmark~\cite{terasort}. For this benchmark, the data to be sorted consists of
 100 byte records, each of which has a 10-byte key and a 90-byte value. We
 target deployments with input datasets that are tens to hundreds of terabytes
-in size. Input data is stored as a collection of files across the cluster's
+in size; the GraySort benchmark's current data size is 100 terabytes.
+
+Input data is stored as a collection of files across the cluster's
 disks. TritonSort's goal is to transform this input data set into an ordered
 set of output files, also stored across the cluster's disks, such that an
 in-order concatenation of these output files is a sorted permutation of the
@@ -34,10 +36,21 @@ cluster's resources well.
 
 As mentioned in Chapter~\ref{chapter:introduction}, a MapReduce computation is
 specified by two functions, \map and \reduce, with \map responsible for
-per-record processing and \reduce responsible for aggregation. Throughout this
-dissertation we will refer to records that are produced by the \map function as
-\emph{intermediate records} or \emph{mapped records} and records produced by
-the \reduce function as \emph{output records} or \emph{reduced records}.
+per-record processing and \reduce responsible for aggregation. MapReduce treats
+a data set as a collection of \emph{records}, each of which consists of a
+\emph{key} and a \emph{value}. Both the key and the value can be arbitrary. A
+record with key $k$ and value $v$ will be denoted \kvpair{k}{v}.  Throughout
+this dissertation we will refer to records that are produced by the \map
+function as \emph{intermediate records} or \emph{mapped records} and records
+produced by the \reduce function as \emph{output records} or \emph{reduced
+  records}.
+
+A canonical example MapReduce job is the problem of counting the occurrences of
+each word in a text corpus. For this problem, the user might write a \map
+function that takes a line of text as input and produces the record
+\kvpair{word}{1} for each word in the line. The \reduce function would then
+receive all records for a given word, add their values together, and produce a
+single record \kvpair{word}{n}.
 
 The \map and \reduce functions can produce an arbitrary number of
 arbitrarily-sized records. This is in sharp contrast to the GraySort benchmark,
