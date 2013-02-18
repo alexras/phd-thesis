@@ -17,7 +17,7 @@ Cassandra~\cite{cassandra} and message queue like Kafka~\cite{kafka} or
 Kestrel~\cite{kestrel} could be substituted.
 
 To run a batch, the user pushes a description of the jobs in the batch to the
-cluster coordinator's job queue. Upon dequeueing a batch, the cluster
+cluster coordinator's job queue. Upon dequeuing a batch, the cluster
 coordinator assigns a unique job ID to each job in the batch. It then determines
 the set of input files that each job will process, and divvies those files out
 among nodes. We describe this process in more detail in

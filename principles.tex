@@ -173,7 +173,7 @@ in-memory buffers, by dequeuing them from a collection of per-stage queues. In
 the process of running, a worker can produce work for a downstream stage, and
 optionally direct that work to a specific worker. If a worker
 does not specify a destination worker, work units are assigned according to a
-per-stage work queueing policy that defaults to round-robin. All workers in a
+per-stage work queuing policy that defaults to round-robin. All workers in a
 given stage graph run in parallel.
 
 When a work unit arrives, the worker executes a stage-specific \texttt{run()}

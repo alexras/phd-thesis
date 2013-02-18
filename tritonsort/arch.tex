@@ -138,7 +138,7 @@ Unlike most other stages, which process a single unit of work during each
 invocation of their \textit{run()} method, the \sender continuously processes
 \nodebuffers as it runs, receiving new work as it becomes available from the
 \pnts stage.  This is because the \sender must remain active to alternate
-between two tasks: accepting incoming \nodebuffers from upstage \pntss, and
+between two tasks: accepting incoming \nodebuffers from upstream \pntss, and
 sending data from accepted \nodebuffers downstream.  To facilitate accepting
 incoming \nodebuffers, each \sender maintains a set of \nodebuffer lists, one
 for each destination host.  Initially these lists are empty.  The \sender
