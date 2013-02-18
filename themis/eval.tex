@@ -215,7 +215,7 @@ created for each of these popular words based on the counter values.
 \subsubsection{Improving Performance for Small Records}
 
 The \map functions in our first implementations of word count and n-gram count
-emitted \kvpair{<word/n-gram}{1} pairs. Our implementations of these \map
+emitted \kvpair{word/n-gram}{1} pairs. Our implementations of these \map
 functions emit \kvpair{hash(word)}{1|word} pairs instead because the resulting
 intermediate partitions are easier to sort quickly because the keys are all
 small and the same size.

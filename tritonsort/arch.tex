@@ -343,9 +343,9 @@ logical disk to be able to read, sort, and write in parallel), or the
 throughput of the disks.  In our case, the limiting factor is the
 output disk bandwidth.  To host one phase two pipeline per input
 disk requires storing 24 logical disks in memory at a time.  To
-accomplish this, we set $size_{LD}$ to $850 MB$, using most of the 24 GB of RAM
+accomplish this, we set $size_{LD}$ to 850 MB, using most of the 24 GB of RAM
 available on each node and allowing for additional memory required by the
-operating system.  To sort $850 MB$ logical disks fast enough to not block the
+operating system.  To sort 850 MB logical disks fast enough to not block the
 \reader and \writer stages, we find that four \sorters suffice.
 
 \subsection{Stage and Buffer Sizing}

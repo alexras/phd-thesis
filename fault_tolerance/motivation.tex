@@ -59,6 +59,19 @@ is a feasible approach for moderately-sized clusters, but also that there are
 significant potential performance benefits for using job-level fault tolerance
 in these environments.
 
+\begin{table}
+\centering
+\caption{\label{tbl:googleMttf} Component-level failure rates
+observed in a Google data center as reported
+in~\cite{google-availability:osdi10}.}
+\begin{tabular}{|c|c|} \hline
+\textbf{Component} & \textbf{Failure rates}\\\hline
+Node & 4.3 months \\
+Disk & 2-4\% annualized\\
+Rack & 10.2 years \\\hline
+\end{tabular}
+\end{table}
+
 Understanding the expected impact of failures is critical to choosing the
 appropriate fault tolerance model.  MapReduce was designed for clusters of many
 thousands of machines running inexpensive, failure-prone commodity
@@ -158,19 +171,6 @@ Hence, we can model the expected completion time of a job $S(p,T)$ as:
 S(p,T) = T\left(\frac{p}{1 - p} + 1\right)
 \label{eqn:expectedjobtime}
 \end{equation}
-
-\begin{table}[t]
-\centering
-\caption{\label{tbl:googleMttf} Component-level failure rates
-observed in a Google data center as reported
-in~\cite{google-availability:osdi10}.}
-\begin{tabular}{|c|c|} \hline
-\textbf{Component} & \textbf{Failure rates}\\\hline
-Node & 4.3 months \\
-Disk & 2-4\% annualized\\
-Rack & 10.2 years \\\hline
-\end{tabular}
-\end{table}
 
 where $p$ is the probability of a node in the cluster failing, and $T$ is the
 runtime of the job.  This estimate is pessimistic, in that it assumes that jobs

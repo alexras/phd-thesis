@@ -9,11 +9,11 @@ In phase two (once all input records have been transferred to their appropriate
 logical disks), the in-memory logical disks are directly passed to workers that
 sort them. These sorters pass sorted logical disks to writers to be written to
 disk. Hence, logical disks are still written to disk, but are not written until
-after they have been sorted. This enabled us to make use of 16 \writer stages,
-since we can separate reads and writes to disk temporally (verses separating
-those operations by partitioning the disks into input and intermediate disks in
-the case of out-of-memory sorting described previously).  The goal of
-MinuteSort is to sort as much data as possible in under one minute, and thus
+after they have been sorted. This enabled us to make use of 16 workers in the
+\reader and \writer stages, since we can separate reads and writes to disk
+temporally (versus separating those operations by partitioning the disks into
+input and intermediate disks in the case of out-of-memory sorting).  The goal
+of MinuteSort is to sort as much data as possible in under one minute, and thus
 the evaluation metric is ``GB sorted.''
 
 We ran TritonSort in its MinuteSort configuration on 66 nodes with 20.5 GB of
