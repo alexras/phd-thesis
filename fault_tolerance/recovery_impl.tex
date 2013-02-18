@@ -27,8 +27,8 @@ recovery.
       the partitions on disk 4 have spread across disks 1 through 3.}
   \end{subfigure}
   \caption{\label{fig:disk_fail} Illustrative example of disk failure and
-    recovery in a two-node cluster. Each node has two intermediate disks and
-    the failed job has eight intermediate partitions. The rectangles
+    recovery in a two-node cluster with two intermediate disks per node and
+    eight intermediate partitions. The rectangles
     representing each partition are labeled with the disk or disks on which
     data for that partition is stored.}
 \end{figure}
@@ -69,10 +69,8 @@ recovery job to recover the other partitions.
       partitions (although there may be duplicates).}
   \end{subfigure}
   \caption{\label{fig:node_fail} Illustrative example of node failure and
-    recovery in a two-node cluster. Each node has two intermediate disks and
-    the failed job has eight intermediate partitions. The rectangles
-    representing each partition are labeled with the disk or disks on which
-    data for that partition is stored, a '?' indicates that it is unknown
+    recovery in a two-node cluster with two intermediate disks per node and
+    eight intermediate partitions. A '?' indicates that it is unknown
     whether the data has been lost or not.}
 \end{figure}
 
