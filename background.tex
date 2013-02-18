@@ -70,11 +70,3 @@ with ``no-op'' \map and \reduce functions that emit any records they receive
 unmodified. As we will see later in this dissertation, we applied many of the
 lessons learned in designing an efficient large-scale sorting system to the
 problem of building an efficient MapReduce platform.
-
-There are several possible implementations of this two-phase architecture, but
-any implementation contains at least a few basic software elements. These
-software elements include {\em Readers} that read data from on-disk files into
-in-memory buffers, {\em Writers} that write buffers to disk, {\em Distributors}
-that distribute a buffer's tuples across a set of logical divisions and {\em
-  Sorters} that sort buffers. The next section describes how these logical
-elements are translated into a flexible, scalable software system.

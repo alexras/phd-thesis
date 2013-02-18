@@ -6,52 +6,50 @@
 Both TritonSort and Themis aim to ensure good resource utilization by being
 ``balanced'' systems. We define a balanced system as one that drives all
 cluster resources at as close to 100\% utilization as possible. For any given
-application and workload, there will be an ideal hardware configuration in
-keeping with the application's demands on a cluster's resources. In practice,
-however, the set of hardware configurations is limited by the availability of
-components; for example, one cannot currently buy a processor with precisely 13
-cores. As a result, a hardware configuration must be chosen that best meets the
-application's demands.  One the appropriate hardware configuration is
-determined, the application must be architected to suitably exploit the
-hardware's capabilities. In the following sections, we outline our
+application and workload, there will be an ideal balanced hardware
+configuration in keeping with the application's demands on a cluster's
+resources. In practice, however, the set of hardware configurations is limited
+by the availability of components; for example, one cannot currently buy a
+processor with precisely 13 cores. As a result, a hardware configuration must
+be chosen that best meets the application's demands.  Once the appropriate
+hardware configuration is determined, the application must be architected to
+exploit the hardware's capabilities. In the following sections, we outline our
 considerations in designing a balanced system, including our choices of
-hardware and software architecture.
+hardware and software architectures.
 
 \section{Design Considerations}
 
 Our system's design is motivated by three main considerations.  First, we rely
 only on commodity hardware components.  This is both to keep the costs of our
 system relatively low and to have our system be representative of today's data
-centers so that the lessons we learn can be applied to other applications with
-similar workload characteristics.  Hence, we do not make use of networking
-substrates like Infiniband that provide high network bandwidth at high cost.
-Also, despite the recent emergence of solid state drives (SSDs) that provide
-higher I/O rates, we chose to use hard disks because they continue to provide
-the most affordable option for high capacity storage and streaming I/O.  We
-believe that properly-architected data-intensive software should not stress
-random I/O behavior, where SSDs currently excel.
+centers so that the lessons we learn can be applied more generally.  Hence, we
+do not make use of networking substrates like Infiniband that provide high
+network bandwidth at high cost.  Also, despite the recent emergence of solid
+state drives (SSDs) that provide higher I/O rates, we chose to use hard disks
+because they continue to provide the most affordable option for high capacity
+storage and streaming I/O.
 
-Second, we focus our software architecture on minimizing both disk seeks and
-disk I/O.  In the particular hardware configuration we chose, the key
-bottleneck among the various system resources is disk I/O bandwidth.  Hence,
-the primary goal of the system is to enable all disks to operate continuously
-at peak bandwidth.  The main challenge in sustaining peak disk bandwidth is to
-minimize the amount of time the disks spend seeking, since any time
-seeking is not spent transferring data
+Second, we focus our software architecture on minimizing disk I/O and random
+disk access.  In the particular hardware configuration we chose, the key
+bottleneck among the various system resources is disk bandwidth.  The main
+challenge in sustaining peak bandwidth is to minimize the amount of time the
+disks spend seeking, because the disk cannot do any effective data transfer
+while seeking from one location to another.
 
 Additionally, we seek to minimize the number of times each record is
 transferred from disk.  Sorting data on clusters that have less memory than the
 total amount of data to be sorted requires every input record to be read and
 written at least twice~\cite{sort-io}.  Since a distributed sort by key is the
 kernel of any MapReduce job, this lower-bound also applies to MapReduce. Since
-every additional read and write increases the time to sort, we seek to achieve
-exactly this lower bound to maximize system performance.
+every additional read and write to disk fundamentally increases the time to
+sort, we seek to achieve exactly this lower bound to maximize system
+performance.
 
 Third, we choose to focus on hardware architectures whose total memory cannot
 contain the entire dataset, because such a design would significantly drive up
 costs and be infeasible for input datasets at the scales that we consider in
-this dissertation. Significant improvements in I/O-efficiency are possible when
-the dataset fits in memory; we explore these implications briefly in
+this dissertation. Significant improvements in efficiency are possible when
+the dataset fits in memory; we explore sorting in-memory briefly in
 Chapter~\ref{chapter:tritonsort}.
 
 \section{Hardware Architecture}
@@ -60,7 +58,8 @@ Chapter~\ref{chapter:tritonsort}.
 To determine the right hardware configuration for our application, we make the
 following observations about our workloads. Since the ``working set'' for our
 data is so large, it does not make sense to separate the cluster into
-computation-heavy and storage-heavy regions. Instead, we provision each server
+computation-heavy and storage-heavy regions, because this would necessitate
+large network transfer between the two. Instead, we provision each server
 in the cluster with an equal amount of processing power and disks.
 
 \begin{table}[t]
@@ -89,8 +88,8 @@ SSD     & 64 GB  & 250 MBps & \$450\\
 \multicolumn{3}{|c|}{1 Gbps Ethernet} & \$33\\
 \hline
 \multicolumn{3}{|c|}{10 Gbps Ethernet} & \$480\\
-%\hline
-%\multicolumn{3}{|c|}{40 Gbps Ethernet} & \$ZZZ\\
+\hline
+\multicolumn{3}{|c|}{40 Gbps Ethernet} & \$3700\\
 \hline
 \multicolumn{4}{c}{}\\
 \hline
@@ -111,15 +110,15 @@ SSD     & 64 GB  & 250 MBps & \$450\\
 Second, almost all of the data needs to be exchanged between machines as part
 of the shuffle step of the computation.  To balance the system, we need to
 ensure that this all-to-all shuffling of data can happen in parallel without
-network bandwidth becoming a bottleneck.  Since we focus on using commodity
-components, we use an Ethernet network fabric.  Commodity Ethernet is available
-in a set of discrete bandwidth levels---1 Gbps, 10 Gbps, and 40 Gbps---with
-cost increasing proportional to throughput (see
-Table~\ref{tab:resourcesummary}).  Given our choice of 7.2k-RPM disks for
-storage, a 1 Gbps network can accommodate at most one disk per server without
-the network throttling disk I/O.  Therefore, we settle on a 10 Gbps network; 40
-Gbps Ethernet has yet to mature and hence is still cost-prohibitive.  To
-balance a 10 Gbps network with disk I/O, we use a server that can host 16
+network bandwidth becoming the overall bottleneck.  Since we focus on using
+commodity components, we use an Ethernet network fabric.  Commodity Ethernet is
+available in a set of discrete bandwidth levels---1 Gbps, 10 Gbps, and 40
+Gbps---with cost increasing proportional to throughput (see
+Table~\ref{tab:resourcesummary}).  Assuming 7.2k RPM 500GB disk drives, a 1
+Gbps network can accommodate at most one disk per server without the network
+throttling disk I/O.  Therefore, we settle on a 10 Gbps network; 40 Gbps
+Ethernet has yet to mature at the end host and hence is still cost-prohibitive.
+To balance a 10 Gbps network with disk I/O, we use a server that can host 16
 disks.  Based on the options available commercially for such a server, we use a
 server that hosts 16 disks and 8 CPU cores.  The choice of 8 cores was driven
 by the available processor packaging: two physical quad-core CPUs.  The larger
@@ -172,7 +171,7 @@ Each stage is implemented by a collection of \emph{workers}, each of which is a
 separate thread. Workers receive input \emph{work units}, which are typically
 in-memory buffers, by dequeuing them from a collection of per-stage queues. In
 the process of running, a worker can produce work for a downstream stage, and
-optionally direct the worker to which that work should be directed. If a worker
+optionally direct that work to a specific worker. If a worker
 does not specify a destination worker, work units are assigned according to a
 per-stage work queueing policy that defaults to round-robin. All workers in a
 given stage graph run in parallel.
