@@ -4,8 +4,10 @@
 *.aux
 *.bbl
 *.blg
+*.d
 *.dvi
 *.fdb_latexmk
+*.fls
 *.glg
 *.glo
 *.gls
@@ -17,6 +19,7 @@
 *.log
 *.lot
 *.maf
+*.make
 *.mtc
 *.mtc0
 *.nav
@@ -26,10 +29,10 @@
 *.ps
 *.snm
 *.synctex.gz
+*.tdo
 *.toc
 *.vrb
 *.xdy
-*.tdo
 main.aux.make
 main.auxbbl.make
 main.auxtarget.make
@@ -39,5 +42,7 @@ main.lof.make
 main.lot.make
 main.out.make
 main.pdf
-main.toc.make
 main.pdf.1st.make
+main.toc.make
+permission/dean-permission.pdf
+permission/permission_template.pdf
